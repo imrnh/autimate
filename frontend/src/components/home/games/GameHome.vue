@@ -1,0 +1,3 @@
+<template>
+    Gameplay home.
+</template>

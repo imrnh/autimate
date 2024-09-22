@@ -1,4 +1,3 @@
 <template>
-
-    
+    Doctor Suggestion
 </template>

@@ -2,25 +2,29 @@
 import Sidebar from './Sidebar.vue';
 
 import Modal from './Modal.vue'; // Assuming you have a Modal component
-import AutismTest from './AutismTest.vue';
-import SingleQuestion from './subcomps/SingleQuestion.vue';
+import SingleQuestion from './tests/SingleQuestion.vue';
 
 export default {
   components: {
     Sidebar,
     Modal,
-    AutismTest,
     SingleQuestion,
   },
   data() {
     return {
       isModalVisible: false,
+      isTestingModel: true,
     };
   },
   methods: {
     showModal() {
       this.isModalVisible = true;
+      this.isTestingModel = false;
     },
+    showAutismTestingModal() {
+      this.isModalVisible = true;
+      this.isTestingModel = true;
+    }
   },
 };
 
@@ -29,18 +33,14 @@ export default {
 <template>
 
   <div class="wrapper">
-    <Sidebar @openModal="showModal" />
+    <Sidebar @openModal="showModal" @showAutismTestingModal="showAutismTestingModal" />
 
     <div class="content_renderer">
-      <AutismTest />
-
-      <!-- Modal -->
-      <Modal v-if="isModalVisible" @close="isModalVisible = false" />
+      <router-view></router-view>
+      
+      <Modal v-if="isModalVisible" @close="isModalVisible = false" :isTestingModel="isTestingModel" />
     </div>
   </div>
-
-
-
 </template>
 
 <style lang="css" scoped>
@@ -60,5 +60,7 @@ export default {
   margin-left: 15px;
   border-radius: var(--br-base);
   background-color: var(--color-whitesmoke-100);
+  overflow-y: scroll;
+  overflow-x: hidden;
 }
 </style>

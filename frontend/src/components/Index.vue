@@ -25,12 +25,11 @@ import '../css/page.css';
 
           <nav class="gallery-info">
             <nav class="about-gallery-pricin-parent">
-              <a class="about-gallery-pricin">tESTING</a>
-              <a class="about-gallery-pricin1">therapy</a>
-              <a class="about-gallery-pricin2">Nearby doctors</a>
-              <a class="about-gallery-pricin3">GAMES</a>
-              <a class="about-gallery-pricin4">Video call</a>
-              <a class="about-gallery-pricin5">CHAT</a>
+              <router-link to="/dashboard" class="about-gallery-pricin">Testing</router-link>
+              <router-link to="/dashboard/therapy" class="about-gallery-pricin1">Therapy</router-link>
+              <router-link to="/dashboard/doctors" class="about-gallery-pricin2">Nearby doctors</router-link>
+              <router-link to="/dashboard/game" class="about-gallery-pricin3">GAMES</router-link>
+              <router-link to="/dashboard/chat" class="about-gallery-pricin4">Video call</router-link>
             </nav>
           </nav>
         </header>
@@ -38,7 +37,9 @@ import '../css/page.css';
           <router-link to="/login"><div class="button1">LOG in</div></router-link>
         </button>
         <button class="button2">
-          <div class="button3">CREATE AN ACCOUNT</div>
+          <router-link to="/signup">
+            <div class="button3">CREATE AN ACCOUNT</div>
+          </router-link>
         </button>
       </div>
     </section>
@@ -274,22 +275,7 @@ import '../css/page.css';
           </div>
         </div>
       </div>
-      <div class="newsletter-parent">
-        <h1 class="newsletter">Newsletter</h1>
-        <div class="newsletter-content">
-          <div class="failure-will-never">
-            Subscribe to get weekly updates and exciting offers!!!
-          </div>
-          <div class="inputdefault-parent">
-            <div class="inputdefault">
-              <input class="placeholder" placeholder="Your email" type="text" />
-            </div>
-            <button class="button4">
-              <div class="button5">Subscribe</div>
-            </button>
-          </div>
-        </div>
-      </div>
+     
     </section>
     <footer class="company-info">
       <div class="company-info1">

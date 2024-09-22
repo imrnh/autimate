@@ -1,6 +1,6 @@
 <script>
-import '../css/global.css';
-import '../css/page1.css';
+import '../../css/global.css';
+import '../../css/page1.css';
 </script>
 
 <template>
@@ -8,26 +8,27 @@ import '../css/page1.css';
       <div class="frame-group">
         <div class="frame-container">
           <div class="blubs-parent">
-            <img class="blubs-icon" alt="" src="../assets/public//blubs.svg" />
+            <img class="blubs-icon" alt="" src="@/assets/public//blubs.svg" />
 
             <div class="vector-parent">
-              <img class="frame-child" alt="" src="../assets/public//rectangle-16.svg" />
+              <img class="frame-child" alt="" src="@/assets/public//rectangle-16.svg" />
 
               <img
                 class="d3f1560d-eb21-4cb8-90b4-1efd77-icon"
                 alt=""
-                src="../assets/public//d3f1560deb214cb890b41efd77a3936d-1@2x.png"
+                src="@/assets/public//d3f1560deb214cb890b41efd77a3936d-1@2x.png"
               />
 
               <div class="frame-item"></div>
             </div>
           </div>
+          <router-link to="/">
           <img
             class="image-132-icon1"
             loading="lazy"
             alt=""
-            src="../assets/public//image-132@2x.png"
-          />
+            src="@/assets/public//image-132@2x.png"
+          /></router-link>
         </div>
         <h2 class="empower-your-life-container">
           <p class="empower-your-life">Empower your lIFE.</p>
@@ -98,7 +99,7 @@ import '../css/page1.css';
                   <span class="already-have-an"
                     >Already have an account? You can
                   </span>
-                  <span class="sign-in-here">Sign in here !</span>
+                  <router-link to="/login"><span class="sign-in-here">Sign in here !</span></router-link>
                 </div>
               </div>
             </div>
