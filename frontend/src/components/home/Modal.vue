@@ -45,8 +45,9 @@ export default {
                             <div class="test_redirect_card">
                                 <img src="@/assets/public/child_walking.png" class="tc_card_bg">
                             </div>
-                            <div class="tc_overlay">
-                                <div class="test_name">Behavioral Video Test</div>
+                            <div class="tc_overlay"> </div>
+                            <div class="tcname_cover">
+                                <div class="test_name">Behavioral Video Analysis</div>
                             </div>
                         </div>
                     </router-link>
@@ -57,8 +58,9 @@ export default {
                             <div class="test_redirect_card">
                                 <img src="@/assets/public/baby_thinking.jpg" class="tc_card_bg">
                             </div>
-                            <div class="tc_overlay">
-                                <div class="test_name">Questionnaire Test</div>
+                            <div class="tc_overlay"></div>
+                            <div class="tcname_cover">
+                                <div class="test_name">Behavioral Questionnaire</div>
                             </div>
                         </div>
                     </router-link>
@@ -171,11 +173,25 @@ export default {
 .tc_overlay {
     width: 300px;
     height: 200px;
-    background-color: whitesmoke;
+    background-color: white;
     position: absolute;
     z-index: 1;
     margin-top: -200px;
-    opacity: 0.6;
+    opacity: 0.4;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.tcname_cover{
+    width: 300px;
+    height: 200px;
+    background-color: transparent;
+    position: absolute;
+    z-index: 1;
+    margin-top: -200px;
     border-radius: 15px;
     display: flex;
     flex-direction: column;
@@ -184,13 +200,17 @@ export default {
 }
 
 .test_name {
-    font-size: 34px;
-    width: 250px;
-    height: 50px;
-    background-color: white;
+    font-size: 22px;
+    width: 280px;
+    min-height: 60px;
+    display: flex;
+    background-color: rgb(237, 232, 232);
     color: black;
     display: flex;
     justify-content: center;
     align-items: center;
+    z-index: 1000;
+    position: fixed;
+    border-radius: 20px;
 }
 </style>

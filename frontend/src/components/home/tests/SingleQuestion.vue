@@ -7,7 +7,7 @@
         </p>
       </div>
       <div class="choices" style="margin-top: -13px;">
-        <div v-for="(option, index) in options" :key="index" class="ans-button" style="width: 230px;">
+        <div v-for="(option, index) in options" :key="index" class="ans-button" style="width: 230px; margin: 5px;">
           <label>
             <input
               class="form-check-input"
@@ -63,3 +63,14 @@ export default {
   },
 };
 </script>
+
+
+<style>
+.question_card{
+  background-color: rgb(239, 237, 234);
+  margin: 10px;
+  padding: 10px;
+  border-radius: 15px;
+}
+
+</style>

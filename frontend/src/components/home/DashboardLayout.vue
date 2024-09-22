@@ -60,7 +60,5 @@ export default {
   margin-left: 15px;
   border-radius: var(--br-base);
   background-color: var(--color-whitesmoke-100);
-  overflow-y: scroll;
-  overflow-x: hidden;
 }
 </style>
