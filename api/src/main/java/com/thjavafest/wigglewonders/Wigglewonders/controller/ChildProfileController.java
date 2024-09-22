@@ -13,7 +13,7 @@ public class ChildProfileController {
     @Autowired
     ChildRepository childRepository;
 
-    @GetMapping("/save")
+    @GetMapping("/save_child")
     public String save(@RequestBody ChildEntity child) {
         childRepository.save(child);
         return  "Things worked";

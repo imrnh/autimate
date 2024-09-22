@@ -17,7 +17,7 @@ def autism_prediction(model_path, data_array):
 
 
 def main(data_array):
-    return autism_prediction("q10_autism_detection_model.onnx", data_array)
+    print(autism_prediction("q10_autism_detection_model.onnx", data_array))
 
 
-# main([ 1., 0., 1., 1., 1., 0., 1., 1., 1., 1., 0., 8., 26., 0.])
+main([ 1., 0., 1., 1., 1., 0., 1., 1., 1., 1., 0., 8., 26., 0.])
