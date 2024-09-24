@@ -1,5 +1,6 @@
 package com.thjavafest.wigglewonders.Wigglewonders.services;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
@@ -14,6 +15,8 @@ import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignReques
 import java.net.URI;
 import java.net.URL;
 import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -42,9 +45,14 @@ public class BucketStorageService {
                     .build();
             URL presignedUrl = preSignedUrlGenerator.presignPutObject(preSignRequest).url();
 
-            // Closing the URL generator and returning the generated URL.
+            ObjectMapper objectMapper = new ObjectMapper();
+            Map<String, String> response = new HashMap<>();
+            response.put("presignedUrl", presignedUrl.toString());
+            response.put("uuid", objectKey.toString());
+
+            //Convert the response map to JSON
             preSignedUrlGenerator.close();
-            return presignedUrl.toString();
+            return objectMapper.writeValueAsString(response); // Return JSON string
         }
         catch (Exception e){
             return e.getMessage();

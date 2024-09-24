@@ -9,13 +9,16 @@ export default {
             selectedActivity: '',
             videoFile: null,
             presignedURL: '',
+            presignedData: {},
+            isLoading: false, 
         };
     },
     methods: {
         async fetchPresignedURL() {
             try {
                 const response = await axios.get('http://localhost:8080/api/test/pre-signed-url');
-                this.presignedURL = response.data;
+                this.presignedData = response.data;
+                this.presignedURL = this.presignedData.presignedUrl; 
             } catch (error) {
                 console.error("Error fetching presigned URL:", error);
                 alert("Failed to fetch presigned URL. Please try again.");
@@ -35,6 +38,7 @@ export default {
             }
 
             try {
+                this.isLoading = true;
                 await this.fetchPresignedURL();
                 const response = await axios.put(this.presignedURL, this.videoFile, {
                     headers: {
@@ -51,6 +55,9 @@ export default {
             } catch (error) {
                 console.error("Error uploading video:", error);
                 alert("Error uploading video. Please try again.");
+            }
+            finally{
+                this.isLoading = false;
             }
         },
 
@@ -109,9 +116,11 @@ export default {
             </div>
         </div>
 
-        <!-- Check Result Button to Trigger Upload -->
         <button class="button6" @click="checkResult">
-            <div style="font-size: 20px;">Check Result</div>
+            <div style="font-size: 20px; display: flex; align-items: center;">
+                <span v-if="isLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="margin-right: 10px;"></span>
+                Check Result
+            </div>
         </button>
     </section>
 </template>
