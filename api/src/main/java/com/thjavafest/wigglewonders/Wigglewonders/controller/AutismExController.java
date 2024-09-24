@@ -21,15 +21,20 @@ public class AutismExController {
     @Autowired
     BucketStorageService bucketStorageService;
 
-    @PostMapping("/api/test/q10")
+    @PostMapping("/api/ex/q10")
     public String submitQuestionnaire(@RequestBody QuestionExamEntity questionnaire) {
         return autismExService.q10Test(questionnaire);
     }
 
 
-    @GetMapping("/api/test/pre-signed-url")
+    @GetMapping("/api/ex/pre-signed-url")
     public String fetchPreSignedUrl() throws Exception {
         return bucketStorageService.getPreSignedUrl();
+    }
+
+    @PostMapping("/api/ex/invoke-video-ex")
+    public String invokeServerless(){
+
     }
 
 }

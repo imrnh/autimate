@@ -18,8 +18,5 @@ def autism_prediction(model_path, video_path):
     
     index_str = str(index.tolist()) 
     confidence_str = str(confidence[index].tolist())
-    
-    return {
-        "control": index_str, 
-        "confidence": confidence_str
-    }
+
+    return index_str, confidence_str
