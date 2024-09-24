@@ -5,16 +5,19 @@ import com.thjavafest.wigglewonders.Wigglewonders.entity.ASDExEntity;
 import com.thjavafest.wigglewonders.Wigglewonders.entity.QuestionExamEntity;
 import com.thjavafest.wigglewonders.Wigglewonders.repo.ASDExRepository;
 import com.thjavafest.wigglewonders.Wigglewonders.repo.QuestionExamRepository;
+import com.thjavafest.wigglewonders.Wigglewonders.services.ASDExServerlessInvokeService;
 import com.thjavafest.wigglewonders.Wigglewonders.services.AutismExQ10Service;
 import com.thjavafest.wigglewonders.Wigglewonders.services.ASDExDBService;
 import com.thjavafest.wigglewonders.Wigglewonders.services.BucketStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class AutismExController {
@@ -27,9 +30,14 @@ public class AutismExController {
     @Autowired
     ASDExRepository asdExRepository;
 
-    @Autowired  ASDExDBService asdExDBService;
+    @Autowired
+    ASDExDBService asdExDBService;
 
+    @Autowired
+    ASDExServerlessInvokeService asdExServerlessInvokeService;
 
+    @Value("${SERVERLESS_ML_VIDEO_URL}")
+    private String serverlessBaseUrl;
 
     @PostMapping("/api/ex/q10")
     public String submitQuestionnaire(@RequestBody QuestionExamEntity questionnaire) {
@@ -49,9 +57,19 @@ public class AutismExController {
         return bucketStorageService.getPreSignedUrl();
     }
 
-    @PostMapping("/api/ex/invoke-video-ex")
-    public String invokeServerless(){
-        return "";
+    @PostMapping("/api/ex/invoke-video-ex/{video_path}")
+    public HttpStatus invokeServerless(@PathVariable String video_path) throws Exception {
+        Map<String, String> queryParams = Map.of(
+                "username", "90900",
+                "video_name", video_path
+        );
+
+        String err = asdExServerlessInvokeService.invokeServerless(serverlessBaseUrl, queryParams);
+
+        if (err == null){
+            return HttpStatus.OK;
+        }
+        return HttpStatus.BAD_REQUEST;
     }
 
     @GetMapping("/api/ex/get-all-test/{username}")

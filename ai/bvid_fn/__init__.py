@@ -29,7 +29,6 @@ def main(username: str, video_name: str) -> str:
 
         if download_status:   
                 asd_stat, confid = autism_prediction(e.MODEL_PATH, e.LOCAL_FILE_NAME)
-                push_to_db(username, request_id, asd_stat, confid)
                 
                 return {"statusCode" : HTTPStatus.OK}
 

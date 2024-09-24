@@ -1,13 +1,12 @@
 package com.thjavafest.wigglewonders.Wigglewonders.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
-import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
 
@@ -21,10 +20,10 @@ import java.util.UUID;
 
 @Service
 public class BucketStorageService {
+
     final String bucketName = "wiggle-space";
     final Duration urlValPeriod = Duration.ofMinutes(30);
     final URI serverEndpoint = URI.create("https://nyc3.digitaloceanspaces.com");
-
     final String accessKey = "DO00ND8KPADVKJDN6Z8V";
     final String secretKey = "t4KrqnMCaQuzgwFwNzgjyxFk2wDq9Bkx/doXKioSyM4";
 

@@ -11,13 +11,14 @@ export default {
             presignedURL: '',
             presignedData: {},
             isLoading: false,
-            filename : '',
+            filename: '',
+            buttonText: 'Check Result'
         };
     },
     methods: {
         async fetchPresignedURL() {
             try {
-                const response = await axios.get('http://localhost:8080/api/test/pre-signed-url');
+                const response = await axios.get('http://localhost:8080/api/ex/pre-signed-url');
                 this.presignedData = response.data;
                 this.presignedURL = this.presignedData.presignedUrl;
             } catch (error) {
@@ -28,7 +29,7 @@ export default {
 
         onFileSelected(event) {
             this.videoFile = event.target.files[0];
-            this.filename = this.videoFile.name; 
+            this.filename = this.videoFile.name;
         },
 
         async uploadFile() {
@@ -40,6 +41,7 @@ export default {
 
             try {
                 this.isLoading = true;
+                this.buttonText = 'Uploading video...';
                 await this.fetchPresignedURL();
                 const response = await axios.put(this.presignedURL, this.videoFile, {
                     headers: {
@@ -49,18 +51,23 @@ export default {
 
                 if (response.status !== 200) {
                     throw new Error('Upload failed: ' + response.statusText);
+                    this.buttonText = "Check Result";
                 }
 
-                alert('File uploaded successfully!');
-                console.log('File uploaded successfully!');
+                //then invoke the function on the following file.
+                this.buttonText = 'Analysing...';
+                await axios.post(`http://localhost:8080/api/ex/invoke-video-ex/${this.presignedData.uuid}`);
+
             } catch (error) {
                 console.error("Error uploading video:", error);
                 alert("Error uploading video. Please try again.");
+                this.isLoading = false;
+                this.buttonText = 'Check Result';
             }
             finally {
+                await delay(30000); // Delay for 30 seconds
                 this.isLoading = false;
-                
-                //trigger do function.
+                this.buttonText = 'Check Result';
             }
         },
 
@@ -77,28 +84,17 @@ export default {
             <h1 class="heading2" style="font-size: 50px;">Behavioral Video Analysis</h1>
         </div>
 
-        <br>
+        <br><br>
         <div class="content-body">
             <div class="auto-layout-vertical">
                 <div class="auto-layout-vertical1" style="margin-top: -40px;">
-                    <select v-model="selectedActivity"
-                        style="height: 60px; border-radius: 15px; font-size: 20px; font-weight: 200;"
-                        class="form-select" aria-label="Default select example">
-                        <option selected>Select an activity to test on</option>
-                        <option value="1">Eat</option>
-                        <option value="2">Shoot Ball</option>
-                        <option value="3">Chew</option>
-                        <option value="4">Flic flac</option>
-                        <option value="5">Shake Hands</option>
-                    </select> <br><br>
-
                     <h3 style="font-weight: 500; font-size: 23px;">
                         Upload a 15-20 sec video of your child doing any of the selected activities.
                     </h3>
                 </div>
 
                 <!-- File Input for Selecting the File -->
-                <br>
+                <br><br>
                 <div class="auto-layout-horizontal">
                     <div class="auto-layout-vertical2">
                         <img class="iconlyboldimage" loading="lazy" alt=""
@@ -126,9 +122,10 @@ export default {
             <div style="font-size: 20px; display: flex; align-items: center;">
                 <span v-if="isLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"
                     style="margin-right: 10px;"></span>
-                Check Result
+                {{ buttonText }} <!-- Use buttonText instead of hardcoded text -->
             </div>
         </button>
+
         <div class="" style="width: 20px; height: 10px;"></div>
     </section>
 </template>
