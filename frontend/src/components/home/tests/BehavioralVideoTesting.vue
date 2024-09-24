@@ -10,7 +10,8 @@ export default {
             videoFile: null,
             presignedURL: '',
             presignedData: {},
-            isLoading: false, 
+            isLoading: false,
+            filename : '',
         };
     },
     methods: {
@@ -18,7 +19,7 @@ export default {
             try {
                 const response = await axios.get('http://localhost:8080/api/test/pre-signed-url');
                 this.presignedData = response.data;
-                this.presignedURL = this.presignedData.presignedUrl; 
+                this.presignedURL = this.presignedData.presignedUrl;
             } catch (error) {
                 console.error("Error fetching presigned URL:", error);
                 alert("Failed to fetch presigned URL. Please try again.");
@@ -27,7 +28,7 @@ export default {
 
         onFileSelected(event) {
             this.videoFile = event.target.files[0];
-            console.log("Selected file:", this.videoFile);
+            this.filename = this.videoFile.name; 
         },
 
         async uploadFile() {
@@ -56,8 +57,10 @@ export default {
                 console.error("Error uploading video:", error);
                 alert("Error uploading video. Please try again.");
             }
-            finally{
+            finally {
                 this.isLoading = false;
+                
+                //trigger do function.
             }
         },
 
@@ -87,7 +90,7 @@ export default {
                         <option value="3">Chew</option>
                         <option value="4">Flic flac</option>
                         <option value="5">Shake Hands</option>
-                    </select> <br>
+                    </select> <br><br>
 
                     <h3 style="font-weight: 500; font-size: 23px;">
                         Upload a 15-20 sec video of your child doing any of the selected activities.
@@ -95,33 +98,38 @@ export default {
                 </div>
 
                 <!-- File Input for Selecting the File -->
+                <br>
                 <div class="auto-layout-horizontal">
                     <div class="auto-layout-vertical2">
                         <img class="iconlyboldimage" loading="lazy" alt=""
                             src="@/assets/public/iconlyboldimage@2x.png" />
-                        <input type="file" @change="onFileSelected" accept="video/*" style="display: none;"
-                            id="fileInput" />
+                        <input type="file" @change="onFileSelected" accept="video/*"
+                            style="display: none; width: 100px; height: 100px;" id="fileInput" />
                         <label for="fileInput" class="select-file" style="cursor: pointer;">Select file</label>
                     </div>
                 </div>
 
-                <div class="auto-layout-horizontal1">
+                <p style="font-size: 16px; margin-top: 20px">{{ filename }}</p>
+                <!-- <div class="auto-layout-horizontal1">
                     <img class="themelight-divider-icon" loading="lazy" alt=""
                         src="@/assets/public/themelight-divider.svg" />
                     <br><br>
                     <div style="margin-top: 20px;" class="or">or</div>
                     <img class="themelight-divider-icon" loading="lazy" alt=""
                         src="@/assets/public/themelight-divider-1.svg" />
-                </div>
+                </div> -->
             </div>
         </div>
+        <br>
 
         <button class="button6" @click="checkResult">
             <div style="font-size: 20px; display: flex; align-items: center;">
-                <span v-if="isLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="margin-right: 10px;"></span>
+                <span v-if="isLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"
+                    style="margin-right: 10px;"></span>
                 Check Result
             </div>
         </button>
+        <div class="" style="width: 20px; height: 10px;"></div>
     </section>
 </template>
 
