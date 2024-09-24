@@ -4,6 +4,8 @@ import numpy as np
 from video_onnx_proc import get_video_tensor
 from utils import download_from_url
 
+from time import perf_counter
+
 
 def autism_prediction(model_path, video_path):
     # Data preperation
@@ -20,9 +22,11 @@ def autism_prediction(model_path, video_path):
 
 
 def main(url):
-    video_file_path = "lib/p_video.mp4"
-    if download_from_url(url, video_file_path):
-        return autism_prediction("lib/behavioral_video_classifier_model.onnx", video_file_path)
+    video_file_path = "lib/12.mp4"
+    st = perf_counter()
+    autism_prediction("lib/behavioral_video_classifier_model.onnx", video_file_path)
 
+    ed = perf_counter()
+    print(round(ed-st, 2))
 
 main("3")

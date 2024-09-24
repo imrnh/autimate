@@ -24,12 +24,28 @@ repositories {
 }
 
 dependencies {
-	implementation 'com.amazonaws:aws-java-sdk-s3:1.12.300'
+//	implementation 'com.amazonaws:aws-java-sdk-s3:1.12.772'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
 	implementation 'org.springframework.boot:spring-boot-starter-data-rest'
 	implementation 'com.microsoft.onnxruntime:onnxruntime:1.19.2'
+
+	implementation 'org.springframework.data:spring-data-mongodb:4.3.3'
+
+
+	implementation 'io.jsonwebtoken:jjwt:0.9.1'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+	implementation 'jakarta.validation:jakarta.validation-api:3.1.0'
+	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+	implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
+	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+
+
+
 
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
@@ -39,6 +55,10 @@ dependencies {
 
 	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+//	testImplementation 'software.amazon.awssdk:s3:2.20.0'
+	implementation 'software.amazon.awssdk:s3:2.20.36' // Adjust the version accordingly
+
+
 
 	compileOnly 'org.projectlombok:lombok:1.18.34'
 	annotationProcessor 'org.projectlombok:lombok:1.18.34'
