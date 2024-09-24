@@ -1,9 +1,12 @@
 package com.thjavafest.wigglewonders.Wigglewonders.controller;
 
 import ai.onnxruntime.OnnxTensor;
+import com.thjavafest.wigglewonders.Wigglewonders.entity.ASDExEntity;
 import com.thjavafest.wigglewonders.Wigglewonders.entity.QuestionExamEntity;
+import com.thjavafest.wigglewonders.Wigglewonders.repo.ASDExRepository;
 import com.thjavafest.wigglewonders.Wigglewonders.repo.QuestionExamRepository;
-import com.thjavafest.wigglewonders.Wigglewonders.services.AutismExService;
+import com.thjavafest.wigglewonders.Wigglewonders.services.AutismExQ10Service;
+import com.thjavafest.wigglewonders.Wigglewonders.services.ASDExDBService;
 import com.thjavafest.wigglewonders.Wigglewonders.services.BucketStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,14 +19,28 @@ import java.util.List;
 @RestController
 public class AutismExController {
     @Autowired
-    AutismExService autismExService;
+    AutismExQ10Service autismExQ10Service;
 
     @Autowired
     BucketStorageService bucketStorageService;
 
+    @Autowired
+    ASDExRepository asdExRepository;
+
+    @Autowired  ASDExDBService asdExDBService;
+
+
+
     @PostMapping("/api/ex/q10")
     public String submitQuestionnaire(@RequestBody QuestionExamEntity questionnaire) {
-        return autismExService.q10Test(questionnaire);
+        String username = "101011";
+        String testType = "Questionnaire";
+        String confidence = autismExQ10Service.q10Test(questionnaire);
+        String asdStatus = Double.parseDouble(confidence) > 0.5 ? "1" : "0";
+
+        ASDExEntity savedEntity = asdExDBService.saveASDExEntity(username, testType, asdStatus, confidence);
+        ResponseEntity.ok(savedEntity);
+        return confidence;
     }
 
 
@@ -34,7 +51,11 @@ public class AutismExController {
 
     @PostMapping("/api/ex/invoke-video-ex")
     public String invokeServerless(){
-
+        return "";
     }
 
+    @GetMapping("/api/ex/get-all-test/{username}")
+    public void getAllTest(@PathVariable String username){
+        List<ASDExEntity> testInfos = asdExRepository.findByUsername(username);
+    }
 }

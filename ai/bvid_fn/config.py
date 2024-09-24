@@ -4,7 +4,7 @@ mongodb_cfg = SimpleNamespace(
     MONGO_USER = "asd",
     MONGO_PASSWORD = "sugarcat",
     MONGO_CLUSTER = "asdcluster.pn2r4.mongodb.net",
-    MONGO_DATABASE = "asd_ex"
+    MONGO_DATABASE = "asd"
 )
 
 

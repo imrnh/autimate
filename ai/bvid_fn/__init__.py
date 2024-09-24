@@ -22,13 +22,14 @@ app = modal.App(image=image, name="autism_video_analysis_fn")
 
 @app.function(gpu=modal.gpu.T4(count=1), timeout=120, volumes={"/storage": modal.Volume.from_name("wwvolume")})
 @modal.web_endpoint(method="POST")
-def main(video_name: str) -> str:
+def main(username: str, video_name: str) -> str:
         request_id = video_name.split(".mp4")[0]
+
         download_status = download_file_from_space(e.SPACE_NAME, video_name, e.LOCAL_FILE_NAME, e.REGION, e.ACCESS_KEY, e.SECRET_KEY)
 
         if download_status:   
                 asd_stat, confid = autism_prediction(e.MODEL_PATH, e.LOCAL_FILE_NAME)
-                push_to_db(request_id, asd_stat, confid)
+                push_to_db(username, request_id, asd_stat, confid)
                 
                 return {"statusCode" : HTTPStatus.OK}
 
