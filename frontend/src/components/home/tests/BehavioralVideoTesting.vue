@@ -1,78 +1,61 @@
 <script>
 import "../../../css/global.css";
 import "../../../css/page5.css";
-
+import axios from 'axios';
 
 export default {
     data() {
         return {
             selectedActivity: '',
-            videoURL: null,
-            mediaRecorder: null,
-            recordedChunks: [],
-            // ffmpeg: createFFmpeg({ log: true }),
+            videoFile: null,
+            presignedURL: '',
         };
     },
     methods: {
-        async startRecording() {
-            const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-            this.mediaRecorder = new MediaRecorder(stream);
+        async fetchPresignedURL() {
+            try {
+                const response = await axios.get('http://localhost:8080/api/test/pre-signed-url');
+                this.presignedURL = response.data;
+            } catch (error) {
+                console.error("Error fetching presigned URL:", error);
+                alert("Failed to fetch presigned URL. Please try again.");
+            }
+        },
 
-            this.mediaRecorder.ondataavailable = (event) => {
-                if (event.data.size > 0) {
-                    this.recordedChunks.push(event.data);
+        onFileSelected(event) {
+            this.videoFile = event.target.files[0];
+            console.log("Selected file:", this.videoFile);
+        },
+
+        async uploadFile() {
+            //validate file exist or not.
+            if (!this.videoFile) {
+                alert("Please select a file before uploading.");
+                return;
+            }
+
+            try {
+                await this.fetchPresignedURL();
+                const response = await axios.put(this.presignedURL, this.videoFile, {
+                    headers: {
+                        'Content-Type': this.videoFile.type,
+                    },
+                });
+
+                if (response.status !== 200) {
+                    throw new Error('Upload failed: ' + response.statusText);
                 }
-            };
 
-            this.mediaRecorder.start();
-
-            // Stop recording after 20 seconds
-            setTimeout(() => {
-                this.mediaRecorder.stop();
-                stream.getTracks().forEach(track => track.stop()); // Stop all media tracks
-                console.log(this.recordedChunks);
-                this.saveVideo();
-            }, 4000);
+                alert('File uploaded successfully!');
+                console.log('File uploaded successfully!');
+            } catch (error) {
+                console.error("Error uploading video:", error);
+                alert("Error uploading video. Please try again.");
+            }
         },
-        saveVideo() {
-            const blob = new Blob(this.recordedChunks, { type: 'video/webm' }); // You can adjust the type if needed
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.style.display = 'none';
-            a.href = url;
-            a.download = 'C:/Users/muimr/Desktop/javafest/frontend/recorded_video.webm'; // Set the filename
-            document.body.appendChild(a);
-            a.click(); 
-            window.URL.revokeObjectURL(url);
 
-            console.log('Video saved!');
-        },
-        async convertVideoToMP4() {
-            await this.ffmpeg.load();
-            const blob = new Blob(this.recordedChunks, { type: 'video/webm' });
-            const fileName = `video_${Date.now()}.webm`;
-            this.ffmpeg.FS('writeFile', fileName, await fetchFile(blob));
-
-            await this.ffmpeg.run('-i', fileName, 'output.mp4'); // Convert to MP4
-
-            const data = this.ffmpeg.FS('readFile', 'output.mp4');
-            const videoBlob = new Blob([data.buffer], { type: 'video/mp4' });
-            const url = URL.createObjectURL(videoBlob);
-            
-            // Trigger download
-            const a = document.createElement('a');
-            a.style.display = 'none';
-            a.href = url;
-            a.download = `video_${Date.now()}.mp4`;
-            document.body.appendChild(a);
-            a.click();
-            window.URL.revokeObjectURL(url);
-
-            this.videoURL = url; // Set video URL for playback
-            this.recordedChunks = []; // Clear the recorded chunks for the next recording
-        },
-        checkResult() {
-            alert('Check result logic here!');
+        async checkResult() {
+            this.uploadFile();
         }
     }
 };
@@ -88,31 +71,33 @@ export default {
         <div class="content-body">
             <div class="auto-layout-vertical">
                 <div class="auto-layout-vertical1" style="margin-top: -40px;">
-                    <!-- <h4 style="font-size: 23px;">Select an activity</h4> <br> -->
-                    <select style="height: 60px; border-radius: 15px; font-size: 20px; font-weight: 200;" class="form-select" aria-label="Default select example">
+                    <select v-model="selectedActivity"
+                        style="height: 60px; border-radius: 15px; font-size: 20px; font-weight: 200;"
+                        class="form-select" aria-label="Default select example">
                         <option selected>Select an activity to test on</option>
                         <option value="1">Eat</option>
                         <option value="2">Shoot Ball</option>
                         <option value="3">Chew</option>
-                        <option value="3">Flic flac</option>
-                        <option value="3"> Shake Hands</option>
+                        <option value="4">Flic flac</option>
+                        <option value="5">Shake Hands</option>
                     </select> <br>
 
                     <h3 style="font-weight: 500; font-size: 23px;">
-                        Upload a 15-20 sec video of your child doing any of the selected activity.
+                        Upload a 15-20 sec video of your child doing any of the selected activities.
                     </h3>
-                    <div class="algorithm-require-you-container">
-                        <p class="algorithm-require-you">&nbsp;</p>
-                    </div>
                 </div>
+
+                <!-- File Input for Selecting the File -->
                 <div class="auto-layout-horizontal">
                     <div class="auto-layout-vertical2">
                         <img class="iconlyboldimage" loading="lazy" alt=""
                             src="@/assets/public/iconlyboldimage@2x.png" />
-
-                        <div class="select-file">Select file</div>
+                        <input type="file" @change="onFileSelected" accept="video/*" style="display: none;"
+                            id="fileInput" />
+                        <label for="fileInput" class="select-file" style="cursor: pointer;">Select file</label>
                     </div>
                 </div>
+
                 <div class="auto-layout-horizontal1">
                     <img class="themelight-divider-icon" loading="lazy" alt=""
                         src="@/assets/public/themelight-divider.svg" />
@@ -121,22 +106,14 @@ export default {
                     <img class="themelight-divider-icon" loading="lazy" alt=""
                         src="@/assets/public/themelight-divider-1.svg" />
                 </div>
-                <button class="typebutton-type-2secondary" @click="startRecording">
-                    <div class="auto-layout-horizontal2">
-                        <img class="iconlyboldcamera" alt="" src="@/assets/public/iconlyboldcamera@2x.png" />
-
-                        <b class="button8">Open Camera & Take Photo</b>
-                        <img class="iconlyboldarrow-right" alt="" src="@/assets/public/iconlyboldarrow--right@2x.png" />
-                    </div>
-                </button>
             </div>
         </div>
-        <button class="button6">
+
+        <!-- Check Result Button to Trigger Upload -->
+        <button class="button6" @click="checkResult">
             <div style="font-size: 20px;">Check Result</div>
         </button>
     </section>
-
-
 </template>
 
 <style></style>

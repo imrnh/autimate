@@ -8,10 +8,7 @@ import com.thjavafest.wigglewonders.Wigglewonders.services.BucketStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,13 +21,13 @@ public class AutismExController {
     @Autowired
     BucketStorageService bucketStorageService;
 
-    @PostMapping("/asd/test/q10")
+    @PostMapping("/api/test/q10")
     public String submitQuestionnaire(@RequestBody QuestionExamEntity questionnaire) {
         return autismExService.q10Test(questionnaire);
     }
 
 
-    @GetMapping("/asd/test/video")
+    @GetMapping("/api/test/pre-signed-url")
     public String fetchPreSignedUrl() throws Exception {
         return bucketStorageService.getPreSignedUrl();
     }

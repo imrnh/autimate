@@ -31,7 +31,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-rest'
 	implementation 'com.microsoft.onnxruntime:onnxruntime:1.19.2'
 
-	implementation 'org.springframework.data:spring-data-mongodb:4.3.3'
+//	implementation 'org.springframework.data:spring-data-mongodb:4.3.3'
 
 
 	implementation 'io.jsonwebtoken:jjwt:0.9.1'
@@ -43,8 +43,9 @@ dependencies {
 	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
 	implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
 	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
-
-
+	implementation 'org.springframework.boot:spring-boot-starter-validation:3.3.4'
+	implementation 'org.springframework.boot:spring-boot-starter-security:3.3.4'
+	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb:3.3.4'
 
 
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
