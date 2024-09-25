@@ -7,18 +7,13 @@ import ai.onnxruntime.*;
 import java.nio.FloatBuffer;
 import java.util.*;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 
 /**
  *  Contain codes for model calling and evaluation.
  *
  */
 
-@Service public class AutismExService {
+@Service public class AutismExQ10Service {
 
     private final OrtEnvironment env = OrtEnvironment.getEnvironment();
 
@@ -52,4 +47,7 @@ import org.springframework.web.bind.annotation.*;
         long[] shape = new long[]{inputArray.length}; // Shape = (14,)
         return OnnxTensor.createTensor(this.env, FloatBuffer.wrap(inputArray), shape);
     }
+
+
+
 }

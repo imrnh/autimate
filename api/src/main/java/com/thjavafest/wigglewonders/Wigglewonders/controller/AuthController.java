@@ -22,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -30,24 +31,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
-//import com.thjavafest.wigglewonders.Wigglewonders.user.User;
-//import com.thjavafest.wigglewonders.Wigglewonders.user.ERole;
 import com.thjavafest.wigglewonders.Wigglewonders.entity.user.RoleEntity;
 import com.thjavafest.wigglewonders.Wigglewonders.entity.user.ERoleEntity;
 import com.thjavafest.wigglewonders.Wigglewonders.entity.user.UserEntity;
 
-
-
-//
-//import com.asd.payload.request.LoginRequest;//need changes
-//import com.asd.payload.request.SignupRequest;//need changes
-//import com.asd.payload.response.UserInfoResponse;//need changes
-//import com.asd.payload.response.MessageResponse;//need changes
-//import com.asd.repository.RoleRepository;//need changes
-//import com.asd.repository.UserRepository;//need changes
-//import com.asd.security.jwt.JwtUtils;//need changes
-//import com.asd.security.services.UserDetailsImpl;//need changes
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -71,56 +58,35 @@ public class AuthController {
   @PostMapping("/signin")
   public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
-    Authentication authentication = authenticationManager.authenticate(
-        new UsernamePasswordAuthenticationToken(loginRequest.getUsername(),loginRequest.getEmail(), loginRequest.getPassword()));
-
+    Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(),loginRequest.getEmail(), loginRequest.getPassword()));
     SecurityContextHolder.getContext().setAuthentication(authentication);
-
     UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-
     ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDetails);
 
-    List<String> roles = userDetails.getAuthorities().stream()
-        .map(item -> item.getAuthority())
-        .collect(Collectors.toList());
-
-    return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
-        .body(new UserInfoResponse(userDetails.getId(),
-                                   userDetails.getUsername(),
-                                   userDetails.getEmail(),
-                                   roles));
+    List<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
+    return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString()).body(new UserInfoResponse(userDetails.getId(), userDetails.getUsername(), userDetails.getEmail(), roles));
   }
 
   @PostMapping("/signup")
   public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
-    if (userRepository.existsByUsername(signUpRequest.getUsername())) {
-      return ResponseEntity
-          .badRequest()
-          .body(new MessageResponse("Error: Username is already taken!"));
-    }
+    if (userRepository.existsByUsername(signUpRequest.getUsername()))
+      return ResponseEntity.badRequest().body(new MessageResponse("Error: Username is already taken!"));
 
-    if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-      return ResponseEntity
-          .badRequest()
-          .body(new MessageResponse("Error: Email is already in use!"));
-    }
+    if (userRepository.existsByEmail(signUpRequest.getEmail()))
+      return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already in use!"));
 
     // Create new user's account
-    UserEntity user = new UserEntity(signUpRequest.getUsername(),
-                         signUpRequest.getEmail(),
-                         signUpRequest.getPhone(),
-                         signUpRequest.getNid(),
-                         signUpRequest.getDob(),
-                         encoder.encode(signUpRequest.getPassword()));
+    UserEntity user = new UserEntity(signUpRequest.getUsername(), signUpRequest.getEmail(), signUpRequest.getPhone(),
+            signUpRequest.getNid(), signUpRequest.getDob(), encoder.encode(signUpRequest.getPassword()));
 
     Set<String> strRoles = signUpRequest.getRoles();
     Set<RoleEntity> roles = new HashSet<>();
 
     if (strRoles == null) {
-      RoleEntity userRole = roleRepository.findByName(ERoleEntity.ROLE_USER)
-          .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+      RoleEntity userRole = roleRepository.findByName(ERoleEntity.ROLE_USER).orElseThrow(() -> new RuntimeException("Error: Role is not found."));
       roles.add(userRole);
-    } else {
+    }
+    else {
       strRoles.forEach(role -> {
         switch (role) {
         case "admin":

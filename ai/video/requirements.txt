@@ -1,4 +1,0 @@
-onnx
-onnxruntime
-requests
-opencv-python
