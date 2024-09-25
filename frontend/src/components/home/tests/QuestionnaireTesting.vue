@@ -144,16 +144,14 @@ export default {
       }
     },
     async viewTestResult() {
-      //calculate score fild.
       this.answers[11] = this.answers.slice(0, 10).reduce((sum, answer) => {
         const value = parseInt(answer) || 0; // Convert answer to an integer, default to 0 if NaN
         return sum + value;
       }, 0);
 
-      //put values within 0-1 range.
       this.answers = this.answers.map((value, index) => {
         if (index >= 0 && index <= 9) {
-          return (value < 3) ? 1 : 0; // Convert to 1 if value is below 3, else 0
+          return (value < 3) ? 1 : 0;
         }
         return value;
       });
@@ -163,8 +161,21 @@ export default {
         questionAnswers: this.answers.filter((_, index) => index < 14)
       });
 
-      console.log(response)
+      var confidence = response.data * 100;
+      confidence = parseFloat(confidence.toFixed(2));
+      var asd_status = "Negative";
+      if (confidence > 50) {
+        asd_status = "Positive";
+      }
 
+      this.$router.push({
+        path: '/dashboard/q-test-result',
+        query: {
+          asd_status: asd_status,
+          confidence: confidence,
+          age: this.answers[12],
+        }
+      });
     },
   },
 };

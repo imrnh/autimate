@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -45,8 +46,9 @@ public class AutismExController {
         String testType = "Questionnaire";
         String confidence = autismExQ10Service.q10Test(questionnaire);
         String asdStatus = Double.parseDouble(confidence) > 0.5 ? "1" : "0";
+        String requestID = "";
 
-        ASDExEntity savedEntity = asdExDBService.saveASDExEntity(username, testType, asdStatus, confidence);
+        ASDExEntity savedEntity = asdExDBService.saveASDExEntity(username, testType, asdStatus, confidence, requestID);
         ResponseEntity.ok(savedEntity);
         return confidence;
     }
@@ -75,5 +77,15 @@ public class AutismExController {
     @GetMapping("/api/ex/get-all-test/{username}")
     public void getAllTest(@PathVariable String username){
         List<ASDExEntity> testInfos = asdExRepository.findByUsername(username);
+    }
+
+    @GetMapping("/api/ex/get-result/username/{username}")
+    public List<HashMap<String, Object>> getDocumentsByUsername(@PathVariable String username) {
+        return asdExDBService.getDocumentsByUsername(username);
+    }
+
+    @GetMapping("/api/ex/get-result/req-id/{requestID}")
+    public HashMap<String, Object> getDocumentByRequestID(@PathVariable String requestID) {
+        return asdExDBService.getDocumentByRequestID(requestID);
     }
 }

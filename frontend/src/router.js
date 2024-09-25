@@ -12,6 +12,8 @@ import Therapy from './components/home/Therapy.vue';
 import GameHome from './components/home/games/GameHome.vue';
 import VideoChatHome from './components/home/chat/VideoChatHome.vue';
 import DoctorSuggestion from './components/home/doctors/DoctorSuggestion.vue';
+import TestResultQ from './components/home/tests/TestResultQ.vue';
+import TestResultVideo from './components/home/tests/TestResultVideo.vue';
 
 const routes = [
   { path: '/', component: Index },
@@ -20,6 +22,7 @@ const routes = [
   {
     path: '/dashboard',
     component: DashboardLayout, // This will act as the common layout
+    props: true,
     children: [
       {
         path: '',
@@ -28,6 +31,8 @@ const routes = [
       {path: 'home', component: Home},
       { path: 'test-q', component: QuestionnaireTesting },
       { path: 'test-video', component: BehavioralVideoTesting },
+      { path: 'q-test-result', component: TestResultQ, props: true },
+      { path: 'video-test-result', component: TestResultVideo, props: true },
       { path: 'therapy', component: Therapy },
       { path: 'game', component: GameHome },
       { path: 'doctors', component: DoctorSuggestion },

@@ -5,8 +5,10 @@ import com.thjavafest.wigglewonders.Wigglewonders.repo.ASDExRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ASDExDBService {
@@ -17,7 +19,7 @@ public class ASDExDBService {
         this.asdExRepository = asdExRepository;
     }
 
-    public ASDExEntity saveASDExEntity(String username, String testType, String asdStatus, String confidence) {
+    public ASDExEntity saveASDExEntity(String username, String testType, String asdStatus, String confidence, String requestID) {
         ASDExEntity entity = new ASDExEntity();
         entity.setUsername(username);
         entity.setTestType(testType);
@@ -49,5 +51,35 @@ public class ASDExDBService {
 
     public void deleteASDExEntity(String id) {
         asdExRepository.deleteById(id);
+    }
+
+    public List<HashMap<String, Object>> getDocumentsByUsername(String username) {
+        List<ASDExEntity> documents = asdExRepository.findByUsername(username);
+        return documents.stream()
+                .map(this::documentToMap)
+                .collect(Collectors.toList());
+    }
+
+    public HashMap<String, Object> getDocumentByRequestID(String requestID) {
+        Optional<ASDExEntity> document = asdExRepository.findByRequestID(requestID);
+        return documentToMap(document);
+    }
+
+    private HashMap<String, Object> documentToMap(ASDExEntity document) {
+        HashMap<String, Object> map = new HashMap<>();
+        if (document != null) {
+            map.put("id", document.getId());
+            map.put("username", document.getUsername());
+            map.put("requestID", document.getRequestID());
+            map.put("testType", document.getTestType());
+            map.put("testDate", document.getTestDate());
+            map.put("asdStatus", document.getAsdStatus());
+            map.put("confidence", document.getConfidence());
+        }
+        return map;
+    }
+
+    private HashMap<String, Object> documentToMap(Optional<ASDExEntity> document) {
+        return document.map(this::documentToMap).orElse(new HashMap<>());
     }
 }

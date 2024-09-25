@@ -6,6 +6,10 @@ export default {
             type: Boolean,
             default: false,
         },
+        isTestResultModel: {
+            type: Boolean,
+            default: false,
+        },
     },
     data() {
         return {
@@ -71,28 +75,8 @@ export default {
                 </div>
             </section>
 
+            <section v-if="isTestResultModel" class="test_result_profile">
 
-
-
-            <section v-else class="child_profile_management">
-                <button id="open_form" @click="toggleFormVisibility">
-                    + Create new profile
-                </button>
-
-                <div class="new_profile_form" v-if="showForm">
-                    <form>
-                        <div class="mb-3">
-                            <input type="text" name="child_name" class="form-control" id="formGroupExampleInput"
-                                placeholder="Child name">
-                        </div>
-                        <div class="mb-3">
-                            <label for="formGroupExampleInput2" class="form-label">Date of birth</label>
-                            <input type="date" name="dob" class="form-control" id="formGroupExampleInput2">
-                        </div>
-                        <button type="submit" class="btn btn-primary" style="float: right; margin-top: 10px;">Create
-                            profile</button>
-                    </form>
-                </div>
             </section>
             <slot></slot>
         </div>

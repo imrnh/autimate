@@ -31,7 +31,9 @@ export default {
             this.videoFile = event.target.files[0];
             this.filename = this.videoFile.name;
         },
-
+        sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        },
         async uploadFile() {
             //validate file exist or not.
             if (!this.videoFile) {
@@ -58,14 +60,17 @@ export default {
                 this.buttonText = 'Analysing...';
                 await axios.post(`http://localhost:8080/api/ex/invoke-video-ex/${this.presignedData.uuid}`);
 
+                //request the result with given id.
+                this.sleep(5000).then(() => { 
+                    this.isLoading = false;
+                    this.buttonText = 'Check Result';
+
+                 });
+
+
             } catch (error) {
                 console.error("Error uploading video:", error);
                 alert("Error uploading video. Please try again.");
-                this.isLoading = false;
-                this.buttonText = 'Check Result';
-            }
-            finally {
-                await delay(30000); // Delay for 30 seconds
                 this.isLoading = false;
                 this.buttonText = 'Check Result';
             }

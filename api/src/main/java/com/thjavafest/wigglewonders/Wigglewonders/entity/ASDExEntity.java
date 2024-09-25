@@ -16,4 +16,5 @@ public class ASDExEntity {
     private String asdStatus;
     private String confidence;
     private LocalDateTime testDate;
+    private String requestID;
 }
