@@ -60,12 +60,37 @@ export default {
                 this.buttonText = 'Analysing...';
                 await axios.post(`http://localhost:8080/api/ex/invoke-video-ex/${this.presignedData.uuid}`);
 
-                //request the result with given id.
-                this.sleep(5000).then(() => { 
+                console.log(this.presignedData.uuid)
+
+                this.sleep(10000).then(async () => {
+                    
+                    //request for the result.
+                    const req_id = this.presignedData.uuid.split('.mp4').join('');
+                    const response = await axios.get(`http://localhost:8080/api/ex/get-result/req-id/${req_id}`);
+                    var rdata = response.data
+
+                    console.log(rdata)
+
+                    var asdStatus = "Negative";
+                    if(rdata.asdStatus == 0){
+                        asdStatus = "Positive";
+                    }
+                    var confidence = rdata.confidence * 100
+                    confidence = parseFloat(confidence.toFixed(2))
+
+
                     this.isLoading = false;
                     this.buttonText = 'Check Result';
 
-                 });
+                    this.$router.push({
+                        path: '/dashboard/video-test-result/',
+                        query: {
+                            asd_status: asdStatus,
+                            confidence: confidence,
+                        }
+                    });
+
+                });
 
 
             } catch (error) {
@@ -73,6 +98,13 @@ export default {
                 alert("Error uploading video. Please try again.");
                 this.isLoading = false;
                 this.buttonText = 'Check Result';
+            }
+        },
+        async fetchResult() {
+            try {
+                
+            } catch (error) {
+                console.error('Error fetching the result:', error);
             }
         },
 

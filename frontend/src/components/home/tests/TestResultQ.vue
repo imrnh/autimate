@@ -42,3 +42,13 @@ export default {
     },
 };
 </script>
+
+
+<style>
+.wtestres{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+</style>
