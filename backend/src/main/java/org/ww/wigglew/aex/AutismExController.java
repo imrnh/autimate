@@ -1,26 +1,38 @@
-package com.thjavafest.wigglewonders.Wigglewonders.controller;
+package org.ww.wigglew.aex;
 
-import ai.onnxruntime.OnnxTensor;
-import com.thjavafest.wigglewonders.Wigglewonders.entity.ASDExEntity;
-import com.thjavafest.wigglewonders.Wigglewonders.entity.QuestionExamEntity;
-import com.thjavafest.wigglewonders.Wigglewonders.repo.ASDExRepository;
-import com.thjavafest.wigglewonders.Wigglewonders.repo.QuestionExamRepository;
-import com.thjavafest.wigglewonders.Wigglewonders.services.ASDExServerlessInvokeService;
-import com.thjavafest.wigglewonders.Wigglewonders.services.AutismExQ10Service;
-import com.thjavafest.wigglewonders.Wigglewonders.services.ASDExDBService;
-import com.thjavafest.wigglewonders.Wigglewonders.services.BucketStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
+
+//import ai.onnxruntime.OnnxTensor;
+//import com.thjavafest.wigglewonders.Wigglewonders.entity.ASDExEntity;
+//import com.thjavafest.wigglewonders.Wigglewonders.entity.QuestionExamEntity;
+//import com.thjavafest.wigglewonders.Wigglewonders.repo.ASDExRepository;
+//import com.thjavafest.wigglewonders.Wigglewonders.repo.QuestionExamRepository;
+//import com.thjavafest.wigglewonders.Wigglewonders.services.ASDExServerlessInvokeService;
+//import com.thjavafest.wigglewonders.Wigglewonders.services.AutismExQ10Service;
+//import com.thjavafest.wigglewonders.Wigglewonders.services.ASDExDBService;
+//import com.thjavafest.wigglewonders.Wigglewonders.services.BucketStorageService;
+
+
+import org.ww.wigglew.aex.entity.ASDExEntity;
+import org.ww.wigglew.aex.entity.QuestionExamEntity;
+import org.ww.wigglew.aex.repo.ASDExRepository;
+import org.ww.wigglew.aex.services.ASDExDBService;
+import org.ww.wigglew.aex.services.ASDExServerlessInvokeService;
+import org.ww.wigglew.aex.services.AutismExQ10Service;
+import org.ww.wigglew.aex.services.BucketStorageService;
+
 @RestController
+@RequestMapping("/api/v1/aex/")
 public class AutismExController {
     @Autowired
     AutismExQ10Service autismExQ10Service;
@@ -40,7 +52,7 @@ public class AutismExController {
     @Value("${SERVERLESS_ML_VIDEO_URL}")
     private String serverlessBaseUrl;
 
-    @PostMapping("/api/ex/q10")
+    @PostMapping("/questions")
     public String submitQuestionnaire(@RequestBody QuestionExamEntity questionnaire) {
         String username = "110011";
         String testType = "Questionnaire";
@@ -54,12 +66,12 @@ public class AutismExController {
     }
 
 
-    @GetMapping("/api/ex/pre-signed-url")
+    @GetMapping("/url/presigned")
     public String fetchPreSignedUrl() throws Exception {
         return bucketStorageService.getPreSignedUrl();
     }
 
-    @PostMapping("/api/ex/invoke-video-ex/{video_path}")
+    @PostMapping("/serverless/invoke/{video_path}")
     public HttpStatus invokeServerless(@PathVariable String video_path) throws Exception {
         Map<String, String> queryParams = Map.of(
                 "username", "110011",
@@ -74,17 +86,24 @@ public class AutismExController {
         return HttpStatus.BAD_REQUEST;
     }
 
-    @GetMapping("/api/ex/get-all-test/{username}")
+    @GetMapping("/tests/{username}")
     public void getAllTest(@PathVariable String username){
         List<ASDExEntity> testInfos = asdExRepository.findByUsername(username);
     }
 
-    @GetMapping("/api/ex/get-result/username/{username}")
+
+    /**
+     * @return List all the tests the user has conducted.
+     */
+    @GetMapping("/results/username/{username}")
     public List<HashMap<String, Object>> getDocumentsByUsername(@PathVariable String username) {
         return asdExDBService.getDocumentsByUsername(username);
     }
 
-    @GetMapping("/api/ex/get-result/req-id/{requestID}")
+    /**
+     * @return Return a single test's result. Necessary for Video Invoking.
+     */
+    @GetMapping("/result/{requestID}")
     public HashMap<String, Object> getDocumentByRequestID(@PathVariable String requestID) {
         return asdExDBService.getDocumentByRequestID(requestID);
     }

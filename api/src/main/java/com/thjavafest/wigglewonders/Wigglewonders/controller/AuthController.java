@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -36,9 +37,7 @@ import com.thjavafest.wigglewonders.Wigglewonders.entity.user.ERoleEntity;
 import com.thjavafest.wigglewonders.Wigglewonders.entity.user.UserEntity;
 
 
-@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping("/api/auth")
 public class AuthController {
   @Autowired
   AuthenticationManager authenticationManager;
@@ -55,19 +54,25 @@ public class AuthController {
   @Autowired
   JwtUtils jwtUtils;
 
-  @PostMapping("/signin")
+  @PostMapping("/auth/signin")
   public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
-
-    Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(),loginRequest.getEmail(), loginRequest.getPassword()));
+    Authentication authentication = authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
+    );
     SecurityContextHolder.getContext().setAuthentication(authentication);
     UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
     ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDetails);
+    List<String> roles = userDetails.getAuthorities().stream()
+            .map(GrantedAuthority::getAuthority)
+            .collect(Collectors.toList());
 
-    List<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
-    return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString()).body(new UserInfoResponse(userDetails.getId(), userDetails.getUsername(), userDetails.getEmail(), roles));
+    return ResponseEntity.ok()
+            .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+            .body(new UserInfoResponse(userDetails.getId(), userDetails.getUsername(), userDetails.getEmail(), roles));
   }
 
-  @PostMapping("/signup")
+  @PostMapping("/auth/signup")
+  @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
   public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
     if (userRepository.existsByUsername(signUpRequest.getUsername()))
       return ResponseEntity.badRequest().body(new MessageResponse("Error: Username is already taken!"));
@@ -76,8 +81,7 @@ public class AuthController {
       return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already in use!"));
 
     // Create new user's account
-    UserEntity user = new UserEntity(signUpRequest.getUsername(), signUpRequest.getEmail(), signUpRequest.getPhone(),
-            signUpRequest.getNid(), signUpRequest.getDob(), encoder.encode(signUpRequest.getPassword()));
+    UserEntity user = new UserEntity(signUpRequest.getUsername(), signUpRequest.getEmail(), encoder.encode(signUpRequest.getPassword()));
 
     Set<String> strRoles = signUpRequest.getRoles();
     Set<RoleEntity> roles = new HashSet<>();

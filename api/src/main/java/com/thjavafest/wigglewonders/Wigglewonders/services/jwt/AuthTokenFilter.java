@@ -46,6 +46,11 @@ public class AuthTokenFilter extends OncePerRequestFilter {
       logger.error("Cannot set user authentication: {}", e);
     }
 
+//    String path = request.getServletPath();
+//    if (path.startsWith("/api/auth/")) {
+//      filterChain.doFilter(request, response);
+//    }
+
     filterChain.doFilter(request, response);
   }
 
