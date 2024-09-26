@@ -2,21 +2,21 @@ package org.ww.wigglew.auth;
 
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.ww.wigglew.auth.models.LoginRequest;
 import org.ww.wigglew.auth.models.RegisterRequest;
+import org.ww.wigglew.auth.phone_verify.SmsSenderService;
 
 @RestController
 @RequestMapping("/api/v1/auth/")
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
+    private final SmsSenderService smsService;
 
-    public AuthenticationController(AuthenticationService authenticationService) {
+    public AuthenticationController(AuthenticationService authenticationService, SmsSenderService smsService) {
         this.authenticationService = authenticationService;
+        this.smsService = smsService;
     }
 
     @PostMapping("/register")
@@ -27,5 +27,15 @@ public class AuthenticationController {
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> register(@RequestBody LoginRequest request){
         return ResponseEntity.ok(authenticationService.login(request));
+    }
+
+    @GetMapping("/send/otp/{receiver}")
+    public ResponseEntity<String> sendOtp(@PathVariable String receiver){
+        return authenticationService.sendOTP(receiver);
+    }
+
+    @GetMapping("/verify/{receiver}/{code}")
+    public AuthenticationResponse verifyOtp(@PathVariable String receiver, @PathVariable String code){
+        return authenticationService.verifyOTP(receiver, code);
     }
 }
