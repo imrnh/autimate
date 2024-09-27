@@ -7,7 +7,7 @@
                 </h2><br>
                 <div class="form-holder">
                     <input v-model="verifData.phone" type="text" name="phoneNumber" class="input" placeholder="Phone" />
-                    <input v-model="verifData.otp" type="text" name="otp" class="input" placeholder="Password" />
+                    <input v-model="verifData.otp"  type="text" name="otp" class="input" placeholder="Password" />
                 </div>
                 <button class="submit-btn" @click="verifyOTP">Verify</button>
                 <div class="resendOtp" @click="resendOtp">Resend code</div>
@@ -29,6 +29,18 @@ import Cookies from 'js-cookie';
 
 
 export default {
+    mounted() {
+        const phone = this.$route.query.phone || ''; // Set phone from query param if present
+        this.verifData.phone = phone; // Assign phone to verifData.phone
+    },
+    computed: {
+        asd_status() {
+            return this.$route.query.asd_status || 'Unknown'; // Default to avoid undefined
+        },
+        confidence() {
+            return this.$route.query.confidence || 'N/A'; // Default value
+        },
+    },
     name: 'AuthForm',
     data() {
         return {

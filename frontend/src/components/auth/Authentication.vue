@@ -12,6 +12,10 @@
         </div>
         <button class="submit-btn" @click="signup">Sign up</button>
         <router-link to="/auth/otp/" style="color: black; font-size: 13px;">or Verify phone number</router-link>
+
+        <div class="message_show_alart_view">
+          <p style="font-weight: 500;" v-if="message">{{ message }}</p>
+        </div>
       </div>
 
       <div :class="['login', { 'slide-up': currentForm === 'signup' }]">
@@ -25,6 +29,11 @@
           </div>
           <button class="submit-btn" @click="login">Log in</button>
           <router-link to="/auth/password/reset/" style="color: black; font-size: 13px;">Forgot password?</router-link>
+
+          <div class="message_show_alart_view">
+            <p style="font-weight: 500; color: green; font-family: 'Nunito', sans-serif;" v-if="message">{{ message }}</p>
+            <p style="font-weight: 500; font-family: 'Nunito', sans-serif; color: red;" v-if="messageError">{{ messageError }}</p>
+          </div>
         </div>
       </div>
     </div>
@@ -33,6 +42,7 @@
 
 <script>
 import axios from 'axios';
+import Cookies from 'js-cookie';
 
 export default {
   name: 'AuthForm',
@@ -47,7 +57,9 @@ export default {
       loginData: {
         phone: '',
         password: ''
-      }
+      },
+      message: '',
+      messageError: '',
     };
   },
   methods: {
@@ -61,23 +73,65 @@ export default {
           phone: this.signupData.phone,
           password: this.signupData.password
         });
-        // console.log('Signup successful', response.data);
-        
+
+        this.$router.push({
+          path: '/auth/otp/',
+          query: {
+            phone: this.signupData.phone,
+          }
+        });
+
       } catch (error) {
-        console.error('Signup error', error);
+        // console.error('Signup error', error);
+        this.messageError = "Error. Please try again";
+        this.message = "";
       }
     },
-    async login() {
+
+
+
+    async login() {//login if user creds valid and user verified. Set cookie.
       try {
         const response = await axios.post('http://localhost:8080/api/v1/auth/login', {
           phone: this.loginData.phone,
           password: this.loginData.password
         });
-        console.log('Login successful', response.data);
-        // Handle success (e.g., store token, redirect)
-      } catch (error) {
-        console.error('Login error', error);
-        // Handle error (e.g., show error message to user)
+
+
+        //if response satus is true, a token has been sent.
+        console.log(response.data.verificationStatus)
+        if (response.data.verificationStatus == true) {
+          console.log("Setting cookie");
+          Cookies.set('token', response.data.token, { expires: 7 });
+          Cookies.set('name', response.data.fullName, { expires: 7 });
+
+          this.$router.push({
+            path: '/dashboard/'
+          })
+        }
+
+        //if not verified, set a code.
+        else {
+          this.messageError= "Please verify your account";
+
+          //send a verification code.
+          const response = await axios.get(`http://localhost:8080/api/v1/auth/send/otp/${this.loginData.phone}`);
+
+          if (response.data == "Verification SMS sent") {
+            this.$router.push({
+              path: '/auth/otp/',
+              query: {
+                phone: this.loginData.phone,
+              }
+            });
+          }
+        }
+
+      }
+      //if returns forbidden, means incorrect creds.
+      catch (error) {
+        this.messageError = "Incorrect phone/password";
+        this.message =  "";
       }
     }
   }
@@ -87,6 +141,7 @@ export default {
 
 <style scoped>
 @import url("https://fonts.googleapis.com/css?family=Fira+Sans");
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
 
 html,
 body {
@@ -101,7 +156,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-.auth_page_wrapper{
+.auth_page_wrapper {
   width: 100vw;
   display: flex;
   justify-content: center;
@@ -377,5 +432,16 @@ body {
       transition: all 0.3s ease;
     }
   }
+}
+
+
+.message_show_alart_view {
+  width: 100%;
+  height: 50px;
+  position: absolute;
+  margin-top: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>
