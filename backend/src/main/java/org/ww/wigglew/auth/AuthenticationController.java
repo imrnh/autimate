@@ -4,6 +4,7 @@ package org.ww.wigglew.auth;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.ww.wigglew.auth.models.LoginRequest;
+import org.ww.wigglew.auth.models.PasswordResetRequest;
 import org.ww.wigglew.auth.models.RegisterRequest;
 import org.ww.wigglew.auth.phone_verify.SmsSenderService;
 
@@ -38,5 +39,10 @@ public class AuthenticationController {
     @GetMapping("/verify/{receiver}/{code}")
     public AuthenticationResponse verifyOtp(@PathVariable String receiver, @PathVariable String code){
         return authenticationService.verifyOTP(receiver, code);
+    }
+
+    @PostMapping("/change_password")
+    public AuthenticationResponse changePassword(@RequestBody PasswordResetRequest request){
+        return authenticationService.changePassword(request);
     }
 }

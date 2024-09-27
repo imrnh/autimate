@@ -31,7 +31,7 @@ import Cookies from 'js-cookie';
 export default {
     mounted() {
         const phone = this.$route.query.phone || ''; // Set phone from query param if present
-        this.verifData.phone = phone; // Assign phone to verifData.phone
+        this.verifData.phone = phone; // Assign phone to verifData.ver
     },
     computed: {
         asd_status() {
@@ -81,7 +81,7 @@ export default {
                 }
             } catch (error) {
                 console.error('Signup error', error);
-                this.message = "Error verfiying. Please try again." + error;
+                this.message = "Error verifying. Please try again." + error;
             }
         },
         async resendOtp() {

@@ -11,4 +11,6 @@ public class AuthenticationResponse {
     private String token;
     private String fullName;
     private Boolean verificationStatus;
+    private Boolean requestSuccess;
+    private String requestMessage;
 }
