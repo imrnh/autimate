@@ -32,7 +32,7 @@ public class AuthenticationService {
     public AuthenticationResponse register(RegisterRequest request){
         var user = UserEntity.builder()
                 .fullName(request.getFullName())
-                .phone(request.getPhone())
+                .phone("+88" + request.getPhone())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(AccessRole.USER)
                 .verificationStatus(PhoneNumberVerificationStatus.UNVERIFIED)
@@ -41,7 +41,7 @@ public class AuthenticationService {
         userRepository.save(user);
 
         //generate an OTP. Push the username (phone number in this case) and OTP to the database along with timestamp of creation.
-
+        sendOTP(user.getPhone());
 
         return AuthenticationResponse.builder().token(null)
                 .fullName(user.getFullName())
@@ -52,13 +52,13 @@ public class AuthenticationService {
     public AuthenticationResponse login(LoginRequest request){
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        request.getPhone(),
+                        "+88" + request.getPhone(),
                         request.getPassword()
                 )
         );
 
         //find user and generate token for the user.
-        var user = userRepository.findByPhone(request.getPhone()).orElseThrow();
+        var user = userRepository.findByPhone("+88" + request.getPhone()).orElseThrow();
 
         //check phone number verified or not.
         if(user.getVerificationStatus() == PhoneNumberVerificationStatus.UNVERIFIED){
@@ -76,6 +76,7 @@ public class AuthenticationService {
 
 
     public ResponseEntity<String> sendOTP(String receiver){
+        receiver = "+88" + receiver;
         try{
             smsService.sendSMS(receiver);
             return ResponseEntity.ok("Verification SMS sent");
@@ -88,6 +89,7 @@ public class AuthenticationService {
 
 
     public AuthenticationResponse verifyOTP(String receiver, String verificationCode){
+        receiver = "+88" + receiver;
         var user = userRepository.findByPhone(receiver).orElseThrow();
 
         boolean isApproved = smsService.checkVerificationCode(receiver, verificationCode); //verify code

@@ -107,17 +107,7 @@
   font-family: inherit;
   z-index: 2;
 }
-.first-name-child {
-  height: 55px;
-  width: 324px;
-  position: relative;
-  border-radius: var(--br-3xs);
-  background-color: var(--background);
-  border: 1px solid var(--text-light);
-  box-sizing: border-box;
-  display: none;
-  max-width: 100%;
-}
+
 .name {
   text-decoration: none;
   position: relative;

@@ -7,6 +7,7 @@ import org.ww.wigglew.auth.models.LoginRequest;
 import org.ww.wigglew.auth.models.RegisterRequest;
 import org.ww.wigglew.auth.phone_verify.SmsSenderService;
 
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api/v1/auth/")
 public class AuthenticationController {

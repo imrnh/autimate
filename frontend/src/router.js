@@ -1,10 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
 import Index from './components/Index.vue';
-import Login from './components/auth/Login.vue';
-import Signup from './components/auth/Signup.vue';
-import DashboardLayout from './components/home/DashboardLayout.vue';
+import Authentication from './components/auth/Authentication.vue';
+import OTP from './components/auth/OTP.vue';
+import PasswordReset from './components/auth/PasswordReset.vue';
 
+import DashboardLayout from './components/home/DashboardLayout.vue';
 import Home from './components/home/Home.vue';
 import QuestionnaireTesting from './components/home/tests/QuestionnaireTesting.vue';
 import BehavioralVideoTesting from './components/home/tests/BehavioralVideoTesting.vue';
@@ -17,8 +18,9 @@ import TestResultVideo from './components/home/tests/TestResultVideo.vue';
 
 const routes = [
   { path: '/', component: Index },
-  { path: '/login', component: Login },
-  { path: '/signup', component: Signup },
+  { path: '/auth', component: Authentication },
+  { path: '/auth/otp', component: OTP, props: true },
+  { path: '/auth/password/reset', component: PasswordReset, props: true },
   {
     path: '/dashboard',
     component: DashboardLayout, // This will act as the common layout
