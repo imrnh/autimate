@@ -18,5 +18,7 @@ public class DoctorEntity {
     private String gender;
     private String officeHours;
 
-    private DoctorAddress address;
+    private String longitude;
+    private String latitude;
+    private String address;
 }
