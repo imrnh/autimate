@@ -68,7 +68,7 @@ export default {
 
     async requestPasswordChange() {
       try {
-        const response = await axios.post('http://localhost:8080/api/v1/auth/change_password', {
+        const response = await axios.post('http://localhost:8080/api/v1/auth/reset_password', {
           phone: this.passResetData.phone,
           password: this.passResetData.password,
           otp: this.passResetData.otp
