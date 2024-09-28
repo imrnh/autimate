@@ -95,7 +95,7 @@ public class DoctorManagerService {
         }
     }
 
-    public ResponseEntity<?> updateDoctor(String id, DoctorEntity updatedDoctor) {
+    public ResponseEntity<?> updateDoctorOld(String id, DoctorEntity updatedDoctor) {
         try {
             Optional<DoctorEntity> doctor = doctorsRepository.findById(id);
             if (doctor.isPresent()) {
@@ -109,6 +109,39 @@ public class DoctorManagerService {
             return ResponseEntity.status(500).body(negativeResponse("Error updating doctor: " + e.getMessage()));
         }
     }
+
+    public ResponseEntity<DoctorResponse> updateDoctor(String id, DoctorEntity updatedDoctor, MultipartFile image) {
+        try {
+            Optional<DoctorEntity> existingDoctorOpt = doctorsRepository.findById(id);
+            if (existingDoctorOpt.isPresent()) {
+                DoctorEntity existingDoctor = existingDoctorOpt.get();
+
+                // Update fields from updatedDoctor
+                existingDoctor.setName(updatedDoctor.getName());
+                existingDoctor.setPhone(updatedDoctor.getPhone());
+                existingDoctor.setDescription(updatedDoctor.getDescription());
+                existingDoctor.setExperienceCount(updatedDoctor.getExperienceCount());
+                existingDoctor.setGender(updatedDoctor.getGender());
+                existingDoctor.setSpecialities(updatedDoctor.getSpecialities());
+                existingDoctor.setOfficeHours(updatedDoctor.getOfficeHours());
+                existingDoctor.setWebsite(updatedDoctor.getWebsite());
+                existingDoctor.setAddress(updatedDoctor.getAddress());
+                // Retain previous image if no new image is provided
+                if (image != null && !image.isEmpty()) {
+                    String imageUrl = uploadImage(image);
+                    existingDoctor.setImage(imageUrl);
+                }
+
+                doctorsRepository.save(existingDoctor);
+                return ResponseEntity.ok(positiveResponse("Doctor updated successfully"));
+            } else {
+                return ResponseEntity.status(404).body(negativeResponse("Doctor not found"));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(negativeResponse("Error updating doctor: " + e.getMessage()));
+        }
+    }
+
 
     public ResponseEntity<?> getDoctor(String id) {
         try {
@@ -127,7 +160,7 @@ public class DoctorManagerService {
             // If IP address is not null, find lon, lat and sort the doctors.
             if (!ip.isEmpty()) {
                 Map<String, String> geoResponse = IpGeolocation.getGeolocationFromIP(ip);
-                if (geoResponse.get("error").isEmpty() && geoResponse.get("exception").isEmpty()) {
+                if (geoResponse.get("error") != null && geoResponse.get("exception") != null) {
                     double userLongitude = Double.parseDouble(geoResponse.get("longitude"));
                     double userLatitude = Double.parseDouble(geoResponse.get("latitude"));
 

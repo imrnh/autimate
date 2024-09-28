@@ -2,12 +2,12 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
+
 export default {
     name: 'DoctorForm',
     data() {
         return {
             doctorData: {
-                id: null,
                 phone: '',
                 name: '',
                 description: '',
@@ -22,101 +22,71 @@ export default {
                 address: ''
             },
             message: " ",
-            isEdit: false // Track if it's an edit operation
         };
     },
-    mounted() {
-        this.loadDoctorData();
-    },
     methods: {
-        loadDoctorData() {
-            // Check if there is doctor data passed via query parameters
-            const doctorQuery = this.$route.query.doctorData;
-            if (doctorQuery) {
-                this.doctorData = JSON.parse(doctorQuery);
-                this.isEdit = true; // Set to true since we're editing
-            }
-        },
         handleImageUpload(event) {
             this.doctorData.image = event.target.files[0]; // Store the file
         },
-        async submitDoctor(e) {
+        async createDoctor(e) {
             e.preventDefault();
             let formData = new FormData();
 
-            // Prepare doctor data without the image for submission
+            // Create a copy of doctorData excluding the image
             let doctorDataCopy = { ...this.doctorData };
-            const isUpdating = this.isEdit;
+            delete doctorDataCopy.image;
 
-            if (!isUpdating) {
-                delete doctorDataCopy.image; // Exclude image for new doctors
-            }
-
-            // Append doctorData as JSON blob
+            // Append 'doctorData' as a JSON blob
             formData.append('doctorData', new Blob([JSON.stringify(doctorDataCopy)], { type: 'application/json' }));
 
-            // Append the image if it is being uploaded
-            if (this.doctorData.image && !isUpdating) { // Ensure image is present only for create
+            // Append the image
+            if (this.doctorData.image) { // Ensure image is present
                 formData.append('image', this.doctorData.image);
+            } else {
+                this.message = "Image file is missing.";
+                return;
             }
 
             try {
                 const token = Cookies.get('admin_token');
-                let response;
-
-                if (isUpdating) {
-                    // Update doctor request
-                    response = await axios.put(`http://localhost:8080/api/v1/doctor/update/${this.doctorData.id}`, formData, {
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                        }
-                    });
-                } else {
-                    // Create doctor request
-                    response = await axios.post('http://localhost:8080/api/v1/doctor/create', formData, {
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                        }
-                    });
-                }
+                const response = await axios.post('http://localhost:8080/api/v1/doctor/create', formData, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                    }
+                });
 
                 if (response.data.requestSuccess) {
-                    this.message = isUpdating ? "Doctor updated successfully!" : "Doctor created successfully!";
+                    this.message = "Doctor created successfully!";
                     // Reset the form
-                    this.resetForm();
+                    this.doctorData = {
+                        phone: '',
+                        name: '',
+                        description: '',
+                        experienceCount: '',
+                        gender: '',
+                        specialities: '',
+                        image: '',
+                        officeHours: '',
+                        website: '',
+                        longitude: '',
+                        latitude: '',
+                        address: ''
+                    };
                 } else {
                     this.message = response.data.requestMessage;
                 }
             } catch (error) {
                 // Enhanced error message handling
                 if (error.response && error.response.data && error.response.data.responseMessage) {
-                    this.message = "Error: " + error.response.data.responseMessage;
+                    this.message = "Error creating doctor: " + error.response.data.responseMessage;
                 } else {
-                    this.message = "Error. " + error.message;
+                    this.message = "Error creating doctor. " + error.message;
                 }
             }
-        },
-        resetForm() {
-            this.doctorData = {
-                id: null,
-                phone: '',
-                name: '',
-                description: '',
-                experienceCount: '',
-                gender: '',
-                specialities: '',
-                image: '',
-                officeHours: '',
-                website: '',
-                longitude: '',
-                latitude: '',
-                address: ''
-            };
         }
     }
 };
 </script>
-
 
 <template>
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
@@ -221,7 +191,7 @@ export default {
 
 
 
-                        <button class="btn btn-primary btn-block" @click="submitDoctor">{{ isEdit ? 'Update Doctor' : 'Create Doctor' }}</button>
+                        <button class="btn btn-primary btn-block" @click="createDoctor">Create Doctor</button>
                     </form>
                     <div style="width: 10px; height: 20px;"></div>
                     <div class="message_show_alert_view">

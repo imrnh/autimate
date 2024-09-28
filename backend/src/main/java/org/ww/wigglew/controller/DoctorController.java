@@ -53,19 +53,28 @@ public class DoctorController {
         return doctorManagerService.deleteDoctor(id);
     }
 
+//    @PutMapping("/update/{id}")
+//    public ResponseEntity<?> updateDoctor(@PathVariable String id, @RequestBody DoctorEntity doctorEntity) {
+//        if (validateAuthority()) return ResponseEntity.status(403).body("Forbidden");
+//        return doctorManagerService.updateDoctor(id, doctorEntity);
+//    }
+
     @PutMapping("/update/{id}")
-    public ResponseEntity<?> updateDoctor(@PathVariable String id, @RequestBody DoctorEntity doctorEntity) {
+    public ResponseEntity<?> updateDoctor(
+            @PathVariable String id,
+            @RequestPart("doctorData") DoctorEntity doctorEntity,
+            @RequestPart(value = "image", required = false) MultipartFile image) {  // Image is optional
         if (validateAuthority()) return ResponseEntity.status(403).body("Forbidden");
-        return doctorManagerService.updateDoctor(id, doctorEntity);
+        return doctorManagerService.updateDoctor(id, doctorEntity, image);
     }
 
     @GetMapping("/get/{id}")
     public ResponseEntity<?> getDoctor(@PathVariable String id) {
-        //if (!validateAuthority()) return ResponseEntity.status(403).body("Forbidden"); // anyone can get doctor including users.
+        //if (validateAuthority()) return ResponseEntity.status(403).body("Forbidden"); // anyone can get doctor including users.
         return doctorManagerService.getDoctor(id);
     }
 
-    @GetMapping("/get-all/")
+    @GetMapping("/get-all")
     public ResponseEntity<?> getAllDoctors(@RequestHeader("X-IP-Address") String ip) {
         return doctorManagerService.getAllDoctors(ip);
     }
