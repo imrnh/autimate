@@ -2,93 +2,206 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
+
 export default {
-    name: 'AuthForm',
+    name: 'DoctorForm',
     data() {
         return {
-            loginData: {
+            doctorData: {
                 phone: '',
-                password: ''
+                name: '',
+                description: '',
+                experienceCount: '',
+                gender: '',
+                specialities: '',
+                image: '',
+                officeHours: '',
+                website: '',
+                longitude: '',
+                latitude: '',
+                address: ''
             },
             message: " ",
         };
     },
     methods: {
-        async login(e) {//login if user creds valid and user verified. Set cookie.
+        handleImageUpload(event) {
+            this.doctorData.image = event.target.files[0]; // Store the file
+        },
+        async createDoctor(e) {
             e.preventDefault();
-            try {
-                const response = await axios.post('http://localhost:8080/api/v1/admin/auth/login', {
-                    phone: this.loginData.phone,
-                    password: this.loginData.password
-                });
+            let formData = new FormData();
 
-                if (response.data.requestSuccess == true) {
-                    Cookies.set('role', 'admin', { expires: 7 });
-                    Cookies.set('admin_token', response.data.token, { expires: 7 });
-                    Cookies.set('admin_name', response.data.fullName, { expires: 7 });
+            // Create a copy of doctorData excluding the image
+            let doctorDataCopy = { ...this.doctorData };
+            delete doctorDataCopy.image;
 
-                    this.$router.push({
-                        path: '/admin/home'
-                    })
-                }
-                else {
-                    this.message = response.data.requestMessage;
-                }
+            // Append 'doctorData' as a JSON blob
+            formData.append('doctorData', new Blob([JSON.stringify(doctorDataCopy)], { type: 'application/json' }));
+
+            // Append the image
+            if (this.doctorData.image) { // Ensure image is present
+                formData.append('image', this.doctorData.image);
+            } else {
+                this.message = "Image file is missing.";
+                return;
             }
 
-            //if returns forbidden, means incorrect creds.
-            catch (error) {
-                this.message = "Incorrect phone/password";
+            try {
+                const token = Cookies.get('admin_token');
+                const response = await axios.post('http://localhost:8080/api/v1/doctor/create', formData, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                    }
+                });
+
+                if (response.data.requestSuccess) {
+                    this.message = "Doctor created successfully!";
+                    // Reset the form
+                    this.doctorData = {
+                        phone: '',
+                        name: '',
+                        description: '',
+                        experienceCount: '',
+                        gender: '',
+                        specialities: '',
+                        image: '',
+                        officeHours: '',
+                        website: '',
+                        longitude: '',
+                        latitude: '',
+                        address: ''
+                    };
+                } else {
+                    this.message = response.data.requestMessage;
+                }
+            } catch (error) {
+                // Enhanced error message handling
+                if (error.response && error.response.data && error.response.data.responseMessage) {
+                    this.message = "Error creating doctor: " + error.response.data.responseMessage;
+                } else {
+                    this.message = "Error creating doctor. " + error.message;
+                }
             }
         }
     }
 };
 </script>
 
-
-
 <template>
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link href="//fonts.googleapis.com/css2?family=Kumbh+Sans:wght@300;400;700&display=swap" rel="stylesheet">
-    <div class="signinform">
-        <h1>Admin Login</h1>
-        <!-- container -->
+    <div class="doctorform" style="width: calc(100vw - 300px);">
+        <h1 style="font-size: 25px; font-weight: 800; margin-top: 5px;">Create New Doctor</h1>
         <div class="container">
-            <!-- main content -->
             <div class="w3l-form-info">
-                <div class="w3_info">
-                    <h2>Login</h2>
+                <div class="w3_info" style="width: 100%; margin-top: -10px;">
+                    <h2>Doctor Details</h2>
                     <form action="#" method="post">
-                        <div class="input-group">
-                            <span><i class="fas fa-user" aria-hidden="true"></i></span>
-                            <input v-model="loginData.phone" type="text" placeholder="Phone">
-                        </div>
-                        <div class="input-group">
-                            <span><i class="fas fa-key" aria-hidden="true"></i></span>
-                            <input v-model="loginData.password" type="Password" placeholder="Password">
-                        </div>
-                        <div class="form-row bottom">
-                            <div class="form-check">
-                                <!-- <input type="checkbox" id="remenber" name="remenber" value="remenber"> -->
-                                <!-- <label for="remenber"> Remember me?</label> -->
+                        <div class="row">
+                            <div class="col-5">
+                                <div class="input-group">
+                                    <span><i class="fas fa-phone" aria-hidden="true"></i></span>
+                                    <input v-model="doctorData.phone" type="text" placeholder="Phone" required>
+                                </div>
                             </div>
-                            <a href="#url" class="forgot">Forgot password?</a>
+                            <div class="col-1"></div>
+                            <div class="col-5">
+                                <div class="input-group">
+                                    <span><i class="fas fa-user" aria-hidden="true"></i></span>
+                                    <input v-model="doctorData.name" type="text" placeholder="Name" required>
+                                </div>
+                            </div>
                         </div>
-                        <button class="btn btn-primary btn-block" @click="login">Login</button>
+                        <div class="row">
+
+
+                            <div class="input-group">
+                                <span><i class="fas fa-pencil-alt" aria-hidden="true"></i></span>
+                                <textarea rows="2" cols="90" style="border: 0; padding-top: 20px; padding-left: 45px;"
+                                    v-model="doctorData.description" placeholder="Description" required></textarea>
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-5">
+                                <div class="input-group">
+                                    <span><i class="fas fa-briefcase" aria-hidden="true"></i></span>
+                                    <input v-model="doctorData.experienceCount" type="text"
+                                        placeholder="Experience (e.g., 19 years)" required>
+                                </div>
+                            </div>
+                            <div class="col-1"></div>
+                            <div class="col-5">
+                                <div class="input-group">
+                                    <span><i class="fas fa-venus-mars" aria-hidden="true"></i></span>
+                                    <input v-model="doctorData.gender" type="text" placeholder="Gender" required>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-5">
+                                <div class="input-group">
+                                    <span><i class="fas fa-stethoscope" aria-hidden="true"></i></span>
+                                    <input v-model="doctorData.specialities" type="text" placeholder="Specialities"
+                                        required>
+                                </div>
+                            </div>
+                            <div class="col-1"></div>
+                            <div class="col-5">
+
+
+                                <div class="input-group">
+                                    <span><i class="fas fa-image" aria-hidden="true"></i></span>
+                                    <input type="file" @change="handleImageUpload" required>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-5">
+
+
+                                <div class="input-group">
+                                    <span><i class="fas fa-clock" aria-hidden="true"></i></span>
+                                    <input v-model="doctorData.officeHours" type="text" placeholder="Office Hours"
+                                        required>
+                                </div>
+                            </div>
+                            <div class="col-1"></div>
+                            <div class="col-5">
+
+                                <div class="input-group">
+                                    <span><i class="fas fa-globe" aria-hidden="true"></i></span>
+                                    <input v-model="doctorData.website" type="text" placeholder="Website">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="input-group">
+                                <span><i class="fas fa-map" aria-hidden="true"></i></span>
+                                <input v-model="doctorData.address" type="text" placeholder="Address" required>
+                            </div>
+                        </div>
+
+
+
+                        <button class="btn btn-primary btn-block" @click="createDoctor">Create Doctor</button>
                     </form>
-                    <!-- <div style="width: 10px;height: 40px;"></div> -->
-                    <!-- <p class="account">Don't have an account? <a href="#signup">Sign up</a></p> -->
-                    <div style="width: 10px; height: 40px;"></div>
-                    <div class="message_show_alart_view">
+                    <div style="width: 10px; height: 20px;"></div>
+                    <div class="message_show_alert_view">
                         <p style="font-weight: 500; color: red; font-size: 18px;" v-if="message">{{ message }}</p>
                     </div>
                 </div>
             </div>
-            <!-- //main content -->
         </div>
     </div>
 </template>
-
 
 
 

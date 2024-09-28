@@ -29,7 +29,7 @@ import org.ww.wigglew.repo.aex.ASDExRepository;
 import org.ww.wigglew.service.aex.ASDExDBService;
 import org.ww.wigglew.service.aex.ASDExServerlessInvokeService;
 import org.ww.wigglew.service.aex.AutismExQ10Service;
-import org.ww.wigglew.service.aex.BucketStorageService;
+import org.ww.wigglew.service.BucketStorageService;
 
 @RestController
 @RequestMapping("/api/v1/aex/")
@@ -68,7 +68,7 @@ public class AutismExController {
 
     @GetMapping("/url/presigned")
     public String fetchPreSignedUrl() throws Exception {
-        return bucketStorageService.getPreSignedUrl();
+        return bucketStorageService.getPreSignedUrl("mp4");
     }
 
     @PostMapping("/serverless/invoke/{video_path}")

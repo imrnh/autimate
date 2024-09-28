@@ -15,8 +15,13 @@ public class DoctorEntity {
     private String phone;
 
     private String name;
+    private String description;
+    private String experienceCount; //example: 19 years
     private String gender;
+    private String specialities;
+    private String image; //url
     private String officeHours;
+    private String website;
 
     private String longitude;
     private String latitude;

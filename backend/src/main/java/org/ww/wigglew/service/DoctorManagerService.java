@@ -3,11 +3,13 @@ package org.ww.wigglew.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.ww.wigglew.entity.doctor.DoctorEntity;
 import org.ww.wigglew.models.response.DoctorResponse;
 import org.ww.wigglew.repo.DoctorsRepository;
 import org.ww.wigglew.service.geocoding.IpGeolocation;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -30,10 +32,17 @@ public class DoctorManagerService {
         return DoctorResponse.builder().responseStat(false).responseMessage(msg).build();
     }
 
-    public ResponseEntity<DoctorResponse> createDoctor(DoctorEntity doctorEntity) {
+    public ResponseEntity<DoctorResponse> createDoctor(DoctorEntity doctorEntity, MultipartFile image) {
         try {
-            try { //different try catch block because we want doctor to be added even if long, lat not found.
-                doctorEntity.setLatitude("0"); doctorEntity.setLongitude("0"); //start by setting these values to 0 to prevent further error.
+            // Handle file upload
+            if (image != null && !image.isEmpty()) {
+                String imageUrl = uploadImage(image); // Implement this method to upload the image to your server or cloud storage
+                doctorEntity.setImage(imageUrl); // Set the image URL in the doctor entity
+            }
+
+            try {
+                doctorEntity.setLatitude("0");
+                doctorEntity.setLongitude("0");
                 Map<String, String> locationData = getLocationData("Empire state building");
                 if(locationData.get("error").isEmpty()) {
                     doctorEntity.setLatitude(locationData.get("latitude"));
@@ -43,7 +52,7 @@ public class DoctorManagerService {
                 e.printStackTrace();
             }
 
-            //save doctor.
+            // Save doctor entity
             doctorsRepository.save(doctorEntity);
             return ResponseEntity.ok(positiveResponse("Doctor created successfully"));
 
@@ -51,6 +60,26 @@ public class DoctorManagerService {
             return ResponseEntity.status(500).body(negativeResponse("Error creating doctor: " + e.getMessage()));
         }
     }
+
+    private String uploadImage(MultipartFile image) throws IOException {
+        String uploadDir = new File("src/main/resources/static/uploads").getAbsolutePath();
+
+        // Create the directory if it doesn't exist
+        File directory = new File(uploadDir);
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+
+        // Save the file to the static directory
+        String filePath = uploadDir + "/" + image.getOriginalFilename();
+        File destinationFile = new File(filePath);
+        image.transferTo(destinationFile);
+
+        return "/uploads/" + image.getOriginalFilename();  // Return the URL path for the file
+    }
+
+
+
 
     public ResponseEntity<DoctorResponse> deleteDoctor(String id) {
         try {

@@ -1,4 +1,4 @@
-package org.ww.wigglew.service.aex;
+package org.ww.wigglew.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
@@ -24,8 +24,8 @@ public class BucketStorageService {
     final String accessKey = "DO00ND8KPADVKJDN6Z8V";
     final String secretKey = "t4KrqnMCaQuzgwFwNzgjyxFk2wDq9Bkx/doXKioSyM4";
 
-    public String getPreSignedUrl(){
-        String objectKey = UUID.randomUUID().toString().replace("-", "").substring(0, 20) + ".mp4";  // Generate a random name of 20 characters for the file.
+    public String getPreSignedUrl(String fileExtension){
+        String objectKey = UUID.randomUUID().toString().replace("-", "").substring(0, 20) + "." + fileExtension;  // Generate a random name of 20 characters for the file.
 
         try{
             AwsBasicCredentials awsCredentials = AwsBasicCredentials.create(accessKey, secretKey);
