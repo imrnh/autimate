@@ -5,6 +5,8 @@ import Authentication from './components/auth/Authentication.vue';
 import OTP from './components/auth/OTP.vue';
 import PasswordReset from './components/auth/PasswordReset.vue';
 
+import AdminLogin from './components/admin/AdminLogin.vue';
+
 import DashboardLayout from './components/home/DashboardLayout.vue';
 import Home from './components/home/Home.vue';
 import QuestionnaireTesting from './components/home/tests/QuestionnaireTesting.vue';
@@ -30,7 +32,7 @@ const routes = [
         path: '',
         redirect: '/dashboard/home', // Redirect to a default child route (optional)
       },
-      {path: 'home', component: Home},
+      { path: 'home', component: Home },
       { path: 'test-q', component: QuestionnaireTesting },
       { path: 'test-video', component: BehavioralVideoTesting },
       { path: 'q-test-result', component: TestResultQ, props: true },
@@ -41,6 +43,9 @@ const routes = [
       { path: 'chat', component: VideoChatHome },
     ],
   },
+
+  //admin
+  { path: '/admin/login', component: AdminLogin },
 ];
 
 const router = createRouter({
