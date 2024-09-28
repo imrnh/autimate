@@ -43,7 +43,7 @@
       // Fetch test results from the API
       async fetchTestResults() {
         try {
-          const response = await axios.get(`http://localhost:8080/api/ex/get-result/username/90900`);
+          const response = await axios.get(`http://localhost:8080/api/ex/get-result/username/110011`);
           this.testResults = response.data;
           console.log(response)
         } catch (error) {

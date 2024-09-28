@@ -42,7 +42,7 @@ public class AutismExController {
 
     @PostMapping("/api/ex/q10")
     public String submitQuestionnaire(@RequestBody QuestionExamEntity questionnaire) {
-        String username = "101011";
+        String username = "110011";
         String testType = "Questionnaire";
         String confidence = autismExQ10Service.q10Test(questionnaire);
         String asdStatus = Double.parseDouble(confidence) > 0.5 ? "1" : "0";
@@ -62,7 +62,7 @@ public class AutismExController {
     @PostMapping("/api/ex/invoke-video-ex/{video_path}")
     public HttpStatus invokeServerless(@PathVariable String video_path) throws Exception {
         Map<String, String> queryParams = Map.of(
-                "username", "90900",
+                "username", "110011",
                 "video_name", video_path
         );
 

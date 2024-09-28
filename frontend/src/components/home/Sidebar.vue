@@ -107,9 +107,29 @@ import '../../css/page3.css';
           <img class="medical-instrument-stethoscope-icon" loading="lazy" alt=""
             src="@/assets/public/uploadoutline.svg" />
 
-          <div class="log-out">Log Out</div>
+          <div class="log-out" @click="logout" style="cursor: pointer;">Log Out</div>
         </div>
       </div>
     </div>
   </div>
 </template>
+
+
+
+<script>
+import Cookies from 'js-cookie';
+
+export default {
+  name: 'Dashboard',
+  methods: {
+    logout() {
+      Cookies.remove('token');
+      Cookies.remove('name');
+
+      this.$router.push({
+        path: '/auth'
+      });
+    }
+  }
+};
+</script>

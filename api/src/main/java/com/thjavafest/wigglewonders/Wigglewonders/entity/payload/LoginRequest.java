@@ -1,11 +1,11 @@
 package com.thjavafest.wigglewonders.Wigglewonders.entity.payload;
 
-import java.util.Collection;
-
-import org.springframework.security.core.GrantedAuthority;
-
+import lombok.Getter;
+import lombok.Setter;
 import jakarta.validation.constraints.NotBlank;
 
+@Setter
+@Getter
 public class LoginRequest {
   @NotBlank
   private String username;
@@ -14,30 +14,5 @@ public class LoginRequest {
   private String email;
 
   @NotBlank
-  private Collection<? extends GrantedAuthority> password;//should it be string?
-
-  
-  public String getUsername() {
-    return username;
-  }
-
-  public void setUsername(String username) {
-    this.username = username;
-  }
-
-  public String getEmail() {
-    return email;
-}
-
-public void setEmail(String email) {
-    this.email = email;
-}
-
-  public Collection<? extends GrantedAuthority> getPassword() {
-    return password;
-  }
-
-  public void setPassword(Collection<? extends GrantedAuthority> password) {
-    this.password = password;
-  }
+  private String password;
 }

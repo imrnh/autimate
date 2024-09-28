@@ -17,8 +17,6 @@ app = modal.App(image=image, name="autism_video_analysis_fn")
 
 
 
-#Env variables
-
 
 @app.function(gpu=modal.gpu.T4(count=1), timeout=120, volumes={"/storage": modal.Volume.from_name("wwvolume")})
 @modal.web_endpoint(method="POST")

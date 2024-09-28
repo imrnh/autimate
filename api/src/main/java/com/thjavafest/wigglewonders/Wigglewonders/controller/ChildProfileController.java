@@ -13,9 +13,9 @@ public class ChildProfileController {
     @Autowired
     ChildRepository childRepository;
 
-    @GetMapping("/save_child")
+    @GetMapping("/api/child_rpfile")
     public String save(@RequestBody ChildEntity child) {
         childRepository.save(child);
-        return  "Things worked";
+        return child.toString();
     }
 }
