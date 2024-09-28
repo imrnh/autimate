@@ -101,7 +101,6 @@ export default {
         //if response satus is true, a token has been sent.
         console.log(response.data.verificationStatus)
         if (response.data.verificationStatus == true) {
-          console.log("Setting cookie");
           Cookies.set('token', response.data.token, { expires: 7 });
           Cookies.set('name', response.data.fullName, { expires: 7 });
 
