@@ -19,7 +19,8 @@ export default {
                 website: '',
                 longitude: '',
                 latitude: '',
-                address: ''
+                address: '',
+                ratings: ''
             },
             message: " ",
             isEdit: false // Track if it's an edit operation
@@ -80,12 +81,18 @@ export default {
                     });
                 }
 
-                if (response.data.requestSuccess) {
+                console.log(response.data)
+
+                if (response.data.responseStat) {
                     this.message = isUpdating ? "Doctor updated successfully!" : "Doctor created successfully!";
-                    // Reset the form
                     this.resetForm();
+
+                    //move to doctors.
+                    this.$router.push({
+                        path: '/admin/doctors'
+                    })
                 } else {
-                    this.message = response.data.requestMessage;
+                    this.message = response.data.responseMessage;
                 }
             } catch (error) {
                 // Enhanced error message handling
@@ -110,7 +117,8 @@ export default {
                 website: '',
                 longitude: '',
                 latitude: '',
-                address: ''
+                address: '',
+                ratings: ''
             };
         }
     }
@@ -127,28 +135,28 @@ export default {
             <div class="w3l-form-info">
                 <div class="w3_info" style="width: 100%; margin-top: -10px;">
                     <h2>Doctor Details</h2>
-                    <form action="#" method="post">
+                    <form action="#" method="post" style="width: 100%; margin-left: 10px">
                         <div class="row">
                             <div class="col-5">
                                 <div class="input-group">
                                     <span><i class="fas fa-phone" aria-hidden="true"></i></span>
-                                    <input v-model="doctorData.phone" type="text" placeholder="Phone" required>
+                                    <input style="color: black;" v-model="doctorData.phone" type="text" placeholder="Phone" required>
                                 </div>
                             </div>
                             <div class="col-1"></div>
                             <div class="col-5">
                                 <div class="input-group">
                                     <span><i class="fas fa-user" aria-hidden="true"></i></span>
-                                    <input v-model="doctorData.name" type="text" placeholder="Name" required>
+                                    <input style="color: black;" v-model="doctorData.name" type="text" placeholder="Name" required>
                                 </div>
                             </div>
                         </div>
                         <div class="row">
 
 
-                            <div class="input-group">
+                            <div class="input-group" style="width: 90%;">
                                 <span><i class="fas fa-pencil-alt" aria-hidden="true"></i></span>
-                                <textarea rows="2" cols="90" style="border: 0; padding-top: 20px; padding-left: 45px;"
+                                <textarea rows="2" cols="90" style="border: 0; background-color: white; color: black ;padding-top: 20px; padding-left: 45px;"
                                     v-model="doctorData.description" placeholder="Description" required></textarea>
                             </div>
                         </div>
@@ -158,15 +166,20 @@ export default {
                             <div class="col-5">
                                 <div class="input-group">
                                     <span><i class="fas fa-briefcase" aria-hidden="true"></i></span>
-                                    <input v-model="doctorData.experienceCount" type="text"
+                                    <input style="color: black;" v-model="doctorData.experienceCount" type="text"
                                         placeholder="Experience (e.g., 19 years)" required>
                                 </div>
                             </div>
-                            <div class="col-1"></div>
-                            <div class="col-5">
+                            <div class="col-3">
                                 <div class="input-group">
                                     <span><i class="fas fa-venus-mars" aria-hidden="true"></i></span>
-                                    <input v-model="doctorData.gender" type="text" placeholder="Gender" required>
+                                    <input style="color: black;" v-model="doctorData.gender" type="text" placeholder="Gender" required>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="input-group">
+                                    <span><i class="fas fa-venus-mars" aria-hidden="true"></i></span>
+                                    <input style="color: black; background-color: white; border: 0; height: 47px;" v-model="doctorData.ratings" type="number" step="0.1" placeholder="Rating" required>
                                 </div>
                             </div>
                         </div>
@@ -176,7 +189,7 @@ export default {
                             <div class="col-5">
                                 <div class="input-group">
                                     <span><i class="fas fa-stethoscope" aria-hidden="true"></i></span>
-                                    <input v-model="doctorData.specialities" type="text" placeholder="Specialities"
+                                    <input style="color: black;" v-model="doctorData.specialities" type="text" placeholder="Specialities"
                                         required>
                                 </div>
                             </div>
@@ -186,7 +199,7 @@ export default {
 
                                 <div class="input-group">
                                     <span><i class="fas fa-image" aria-hidden="true"></i></span>
-                                    <input type="file" @change="handleImageUpload" required>
+                                    <input style="color: black;" type="file" @change="handleImageUpload" required>
                                 </div>
                             </div>
                         </div>
@@ -198,7 +211,7 @@ export default {
 
                                 <div class="input-group">
                                     <span><i class="fas fa-clock" aria-hidden="true"></i></span>
-                                    <input v-model="doctorData.officeHours" type="text" placeholder="Office Hours"
+                                    <input style="color: black;" v-model="doctorData.officeHours" type="text" placeholder="Office Hours"
                                         required>
                                 </div>
                             </div>
@@ -207,15 +220,15 @@ export default {
 
                                 <div class="input-group">
                                     <span><i class="fas fa-globe" aria-hidden="true"></i></span>
-                                    <input v-model="doctorData.website" type="text" placeholder="Website">
+                                    <input style="color: black;" v-model="doctorData.website" type="text" placeholder="Website">
                                 </div>
                             </div>
                         </div>
 
                         <div class="row">
-                            <div class="input-group">
+                            <div class="input-group" style="width: 90%;">
                                 <span><i class="fas fa-map" aria-hidden="true"></i></span>
-                                <input v-model="doctorData.address" type="text" placeholder="Address" required>
+                                <input style="color: black;" v-model="doctorData.address" type="text" placeholder="Address" required>
                             </div>
                         </div>
 
@@ -256,6 +269,9 @@ html {
 * {
     box-sizing: border-box;
     font-family: 'Kumbh Sans', sans-serif;
+}
+input{
+    color: black;
 }
 
 /*  wrapper */

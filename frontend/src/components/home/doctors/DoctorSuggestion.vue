@@ -1,33 +1,65 @@
 <template>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.0.0/css/font-awesome.min.css"
-        integrity="sha512-FEQLazq9ecqLN5T6wWq26hCZf7kPqUbFC9vsHNbXMJtSZZWAcbJspT+/NEAQkBfFReZ8r9QlA9JHaAuo28MTJA=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <div class="container" style="margin-top: 30px; min-width: calc(100vw - 240px);">
 
-        
-    <div class="all-contents4" style="width: calc(100vw - 270px); height: 98vh;">
+        <select name="doctor_sorting" v-model="selectedSorting" @change="onSortingChange" 
+            style="width: 200px; height: 40px; border-radius: 10px; background-color: transparent; border: 1px solid gray; color: black; padding-left: 10px;">
+            <option value="nearby">Nearest</option>
+            <option value="highest-rated">Highest Rated</option>
+        </select>
 
-        <div class="content-items" v-for="doctor in doctors" :key="doctor.id" style="display: flex; align-items: flex-start; justify-content: flex-start;">
-            <div class="item-6" style="border: 1px solid rgb(239, 239, 239); position: relative; height: 330px;">
-                <img class="image-icon3" loading="lazy"
-                    :src="doctor.image ? 'http://localhost:8080' + doctor.image : './public/image-3@2x.png'"
-                    alt="Doctor Image" />
+        <br>
+        <br>
+        <div class="row" style="display: flex; flex-wrap: wrap; gap: 0px; padding: 0;">
+            <div class="col-md-4" v-for="doctor in doctors" :key="doctor.id" style="width: 500px; height: 330px;">
+                <div class="card mb-4 shadow-sm"
+                    style="border-radius: 15px; overflow: hidden; border: none; padding: 8px;">
+                    <div style="display: flex; flex-direction: row; align-items: center;">
+                        <!-- Doctor Image -->
+                        <img style="width: 180px; height: 180px; object-fit: cover; border-radius: 15px; position: absolute; top: 0; margin-top: 10px;"
+                            :src="doctor.image ? 'http://localhost:8080' + doctor.image : './public/image-3@2x.png'"
+                            alt="Doctor Image">
 
-                <div class="profile-info">
-                    <b class="text">{{ doctor.name }}</b>
-                    <!-- <div class="pricing">{{ doctor.experienceCount || 'N/A' }}</div> -->
-                    <div class="location-on-black-24dp-2-parent" style="margin-top: -10px;">
-                        <div class="doane-street-fremont-ca-94538-wrapper">
-                            <div class="doane-street-fremont"
-                                style="position: absolute; left: 0; margin-left: 10px; margin-top: 4px;">
-                                <i class="fa fa-map-marker" aria-hidden="true"></i>
-                                {{ doctor.address || 'Address not available' }}
-                            </div>
+                        <!-- Doctor Info -->
+                        <div
+                            style="padding: 5px; width: 300px; height: 260px; background-color: #f8f9fa; flex-grow: 1; border-radius: 15px;">
+                            <h5 style="font-weight: 800; font-size: 1.5rem; color: #343a40; 
+                                position: absolute; left: calc(180px + 35px); top: 0; margin-top: 20px;">
+                                {{ doctor.name }}</h5>
+
+                            <p style="position: absolute; top: 0; margin-top: 55px; left: 0; margin-left: 215px;"><i
+                                    style="color: gold" class="fa fa-star" aria-hidden="true"></i> &nbsp;{{
+                                        doctor.ratings || "-" }} </p>
+
+                            <p style="position: absolute; left: calc(180px + 35px); top: 0; margin-top: 80px;">{{
+                                doctor.description || 'No description available' }}</p>
+                            <p
+                                style="position: absolute; left: calc(180px + 35px); top: 0; margin-top: 130px; color: brown; font-weight: 600;">
+                                {{
+                                    doctor.experienceCount || '_' }} experience</p>
+                            <p style="position: absolute; left: calc(180px + 35px); top: 0; margin-top: 155px;"><b
+                                    style="color: blueviolet">Specialities:</b> {{ doctor.specialities || "" }}</p>
+
+                            <p
+                                style="position: absolute; bottom: 0; margin-bottom: 44px; left: 0; margin-left: 15px;color: darkolivegreen;">
+                                <i class="fa fa-map-marker" aria-hidden="true"></i> {{ doctor.address || "" }}<br>
+                            </p>
+
+                            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; | &nbsp; &nbsp; &nbsp;
+
+                            <p class="card-text"
+                                style="color: #6c757d; line-height: 1.6; position: absolute; bottom: 0; 
+                                margin-bottom: 15px; left: 0; margin-left: 15px; display: flex; align-items: self-start; justify-content: space-around;">
+                            <p>{{ doctor.phone }}</p> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <a :href="doctor.website" target="_blank"
+                                style="color: #007bff; text-decoration: none;">Website</a><br>
+                            </p>
+
                         </div>
                     </div>
-                    <div style="width: 1px; height: 10px;"></div>
                 </div>
             </div>
         </div>
+
     </div>
 </template>
 
@@ -38,24 +70,30 @@ import '../../../css/page7.css';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
-
 export default {
     data() {
         return {
-            doctors: [] // This will hold the doctor data
+            doctors: [], // This will hold the doctor data
+            selectedSorting: 'nearby' // Default sorting option
         };
     },
     mounted() {
-        this.fetchDoctors();
+        this.fetchDoctors('nearby'); // Fetch doctors for the default sorting option
     },
     methods: {
-        async fetchDoctors() {
+        async fetchDoctors(sorting) {
             const token = Cookies.get('token');
-
             const ipAddress = await this.getUserIpAddress(); // Get user's IP address
+            let endpoint = '';
+
+            if (sorting === 'highest-rated') {
+                endpoint = 'http://localhost:8080/api/v1/doctor/list/ratings';
+            } else {
+                endpoint = 'http://localhost:8080/api/v1/doctor/list/nearby';
+            }
 
             try {
-                const response = await axios.get('http://localhost:8080/api/v1/doctor/get-all', {
+                const response = await axios.get(endpoint, {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                         'X-IP-Address': ipAddress
@@ -75,6 +113,9 @@ export default {
                 return '0.0.0.0'; // Default IP if unable to fetch
             }
         },
+        onSortingChange() {
+            this.fetchDoctors(this.selectedSorting); // Fetch doctors based on the selected sorting option
+        }
     }
 };
 </script>
