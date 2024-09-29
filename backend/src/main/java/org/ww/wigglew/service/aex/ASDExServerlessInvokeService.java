@@ -1,40 +1,40 @@
 package org.ww.wigglew.service.aex;
 
 import org.springframework.stereotype.Service;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.ww.wigglew.models.request.AsdExRequest;
 
 import java.net.URI;
-import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-
 
 @Service
 public class ASDExServerlessInvokeService {
 
-    public String invokeServerless(String urlString, Map<String, String> queryParams)  {
-        try{
-            String queryString = queryParams.entrySet().stream()
-                    .map(entry -> URLEncoder.encode(entry.getKey(), StandardCharsets.UTF_8) + "="
-                            + URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8))
-                    .collect(Collectors.joining("&"));
+    public String invokeServerless(String urlString, AsdExRequest requestPayload) {
+        try {
+            // Convert the request object to JSON
+            ObjectMapper objectMapper = new ObjectMapper();
+            String requestBody = objectMapper.writeValueAsString(requestPayload);
 
-            URI uri = new URI(urlString + "?" + queryString);
+            // Create URI
+            URI uri = new URI(urlString);
 
+            // Build the POST request with the Authorization header and JSON body
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(uri)
                     .header("Content-Type", "application/json")
-                    .POST(HttpRequest.BodyPublishers.noBody())
+                    .POST(HttpRequest.BodyPublishers.ofString(requestBody, StandardCharsets.UTF_8))
                     .build();
 
+            // Send request asynchronously and handle timeout after 2 seconds
             CompletableFuture<Void> _future = client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-                    .orTimeout(3, TimeUnit.SECONDS) // Time out after 2 seconds
+                    .orTimeout(2, TimeUnit.SECONDS)
                     .thenAcceptAsync(response -> {
                         System.out.println("Response received asynchronously: " + response.body());
                     }).exceptionally(ex -> {
@@ -43,12 +43,8 @@ public class ASDExServerlessInvokeService {
                     });
 
             return null;
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             return e.getMessage();
         }
     }
 }
-
-
-

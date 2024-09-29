@@ -1,12 +1,13 @@
 import os
 import modal
 import modal.gpu
+import numpy as np
 from http import HTTPStatus
 from datetime import datetime
 
 from ai_fn.do import download_file_from_space
 from ai_fn.video_inference import video_autism_prediction
-from ai_fn.write_db import push_to_db
+from ai_fn.db import push_to_db, numpy_data_formatter
 from ai_fn.q10_manager import q10_data_proc, q10_autism_prediction
 from ai_fn.config import env_cfg as e, SECRET_TOKEN
 
@@ -40,20 +41,24 @@ def main(args: dict) -> str:
                 # Q10 data processing.
                 proc_q10_array = q10_data_proc(q10_data_array)
                 q10_res = q10_autism_prediction(e.Q_MODEL_PATH, proc_q10_array)
-
+                
                 #Video inferencing
                 video_res_status, video_res_confidence = video_autism_prediction(e.MODEL_PATH, e.LOCAL_FILE_NAME)
-
 
                 # Ask GPT for therapy suggestions.
                 suggested_therapies = "Speech Therapy"
                 suggested_games = "Flashcard"
 
+                print(q10_res)
+                print(video_res_status)
+                print(video_res_confidence)
+
                 # Write info to db.    
                 db_data = {
                         "username": username, "requestID": request_id, "testDate": datetime.now(),
-                        "q10": q10_res,
-                        "vid_res": video_res_status, "vid_confid": video_res_confidence,
+                        "q10": str(q10_res[0]),
+                        "vid_res": video_res_status, 
+                        "vid_confid": video_res_confidence,
                         "suggested_therapies": suggested_therapies,
                         "suggested_games": suggested_games
                 }
