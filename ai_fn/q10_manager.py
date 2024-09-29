@@ -20,8 +20,7 @@ def q10_autism_prediction(model_path, data_array):
     # Model building.
     ort_session = ort.InferenceSession(model_path)
     output = ort_session.run(None, data_array)
-    
-    return output
+    return output[0]
 
 
 

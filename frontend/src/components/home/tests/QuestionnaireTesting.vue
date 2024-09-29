@@ -1,5 +1,5 @@
 <template>
-  <div class="heading-wrapper">
+  <div class="heading-wrapper" style="width: 100vw;">
     <h1
       style="margin-top: 60px; margin-bottom: 50px; padding-bottom: 10px; height: 50px; font-size: 40px; font-weight: 700;">
       Please Answer the following 10 questions
@@ -58,39 +58,9 @@
       :options="['Many times a day', 'A few times a day', 'A few times a week', 'Less than once a week', 'Never']"
       :value="answers[9]" :index="9" @update-answer="updateAnswer" />
 
-    <div v-if="step == 5" class="personal_questions">
-      <div class="row">
-
-        <div class="col-5">
-          <div class="form-group">
-            <select class="form-control" style="margin-bottom: 10px;width: 100%; height: 50px;" id="autismHistory"
-              v-model="answers[10]">
-              <option value="" disabled>Does any family member of this child have a history of autism?</option>
-              <option value="1">Yes</option>
-              <option value="0">No</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="col-4">
-          <div class="form-group">
-            <input type="number" min="0" style="width: 100%; height: 50px;" class="form-control" name="child_age"
-              id="childAge" placeholder="Age of the child (in months)" v-model="answers[12]">
-          </div>
-        </div>
-
-        <div class="col-3">
-          <div class="form-group">
-            <select class="form-control" style=" height: 50px; width: 300px;" id="genderSelect" v-model="answers[13]">
-              <option value="" disabled>Gender</option>
-              <option value="0">Female</option>
-              <option value="1">Male</option>
-            </select>
-          </div>
-        </div>
-
-      </div>
-    </div>
+    <SingleQuestion v-if="step == 5" :question="`Does any family member of this child have a history of autism?`"
+      :options="['Yes', 'No']"
+      :value="answers[10]" :index="10" @update-answer="updateAnswer" />
 
 
     <br><br>
@@ -107,8 +77,8 @@
     </button>
 
 
-    <button v-else class="button6" @click="viewTestResult">
-      <div class="create-account2">View Test Result</div>
+    <button v-else class="button6" @click="proceedToBehavioralTest">
+      <div class="create-account2">Proceed to Behavioral Test</div>
     </button>
   </div>
 </template>
@@ -117,6 +87,7 @@
 <script>
 import SingleQuestion from './SingleQuestion.vue';
 import axios from 'axios';
+import Cookies from 'js-cookie';  // Install js-cookie if you haven't: npm install js-cookie
 
 
 export default {
@@ -143,39 +114,31 @@ export default {
         this.step--;
       }
     },
-    async viewTestResult() {
+    async proceedToBehavioralTest() {
+
+      let childAge = Cookies.get("child_age");
+      let childGender = Cookies.get("child_gender");
+
+      if (childAge == undefined) {
+        childAge = 0;
+      }
+
+      this.answers[12] = childAge;
+      this.answers[13] = childGender;
+
+
       this.answers[11] = this.answers.slice(0, 10).reduce((sum, answer) => {
         const value = parseInt(answer) || 0; // Convert answer to an integer, default to 0 if NaN
         return sum + value;
       }, 0);
 
-      // this.answers = this.answers.map((value, index) => {
-      //   if (index >= 0 && index <= 9) {
-      //     return (value < 3) ? 1 : 0;
-      //   }
-      //   return value;
-      // });
-
-
-      const response = await axios.post("http://localhost:8080/api/ex/q10", {
-        questionAnswers: this.answers.filter((_, index) => index < 14)
-      });
-
-      var confidence = response.data * 100;
-      confidence = parseFloat(confidence.toFixed(2));
-      var asd_status = "Negative";
-      if (confidence > 50) {
-        asd_status = "Positive";
-      }
-
       this.$router.push({
-        path: '/dashboard/q-test-result',
+        path: '/dashboard/aex/video',
         query: {
-          asd_status: asd_status,
-          confidence: confidence,
-          age: this.answers[12],
-        }
+          questionAnswers: JSON.stringify(this.answers.filter((_, index) => index < 14)), // Pass as a string
+        },
       });
+
     },
   },
 };

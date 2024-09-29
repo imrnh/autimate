@@ -12,9 +12,11 @@ public class ASDExEntity {
     @Id
     private String id;
     private String username;
-    private String testType;
-    private String asdStatus;
-    private String confidence;
-    private LocalDateTime testDate;
     private String requestID;
+    private LocalDateTime testDate; // Ensure to convert from your long timestamp
+    private String q10;
+    private String vid_res;
+    private String vid_confid;
+    private String suggested_therapies;
+    private String suggested_games;
 }

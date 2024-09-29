@@ -9,17 +9,36 @@ export default {
     data() {
         return {
             childId: null,
-            childName: null
+            childName: null,
+            req_id: '',
         };
     },
-    mounted() {
+    async mounted() {
         this.childId = Cookies.get('childId');
         this.childName = Cookies.get('child_name');
-    },
+        this.req_id = this.$route.query.req_id;
+
+        if (this.req_id) {
+            try {
+                const token = Cookies.get('token');
+                const response = await axios.get(`http://localhost:8080/api/v1/aex/res/${this.req_id}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                const rdata = response.data;
+
+                {/* this.asdStatus = rdata.asdStatus === 0 ? "Positive" : "Negative";
+        this.confidence = parseFloat((rdata.confidence * 100).toFixed(2)); */}
+            } catch (error) {
+                console.error("Error fetching result:", error);
+                alert("Error fetching result. Please try again.");
+            }
+        }
+    }
 }
 
 </script>
-
 
 
 <template>

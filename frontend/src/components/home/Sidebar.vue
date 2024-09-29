@@ -43,7 +43,12 @@ import '../../css/page3.css';
                   src="@/assets/public/medicalinstrumentstethoscopestreamlineultimate.svg" />
 
                 <!-- <router-link to="/dashboard/select-test" style="color: white;"> -->
-                  <div @click="$emit('showAutismTestingModal')" style="cursor: pointer;" class="testing">TESTING</div>
+                  <!-- <div @click="$emit('showAutismTestingModal')" style="cursor: pointer;" class="testing">TESTING</div> -->
+
+                  <router-link to="/dashboard/aex/q">
+                    <div style="cursor: pointer; color: white;" class="testing">TESTING</div>
+                  </router-link>
+
                 <!-- </router-link> -->
               </div>
               <div class="pet-shop-child"></div>

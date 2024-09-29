@@ -15,18 +15,22 @@
             <tr>
               <th scope="col">#</th>
               <th scope="col">Date performed</th>
-              <th scope="col">Test Type</th>
+              <th scope="col">Q10 (Possibility of Autism)</th>
               <th scope="col">Result</th>
               <th scope="col">Confidence (%)</th>
+              <th scope="col">Suggested Therapies</th>
+              <th scope="col">Suggested Games</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="(test, index) in testResults" :key="test.id">
               <th scope="row">{{ index + 1 }}</th>
               <td>{{ formatDate(test.testDate) }}</td>
-              <td>{{ test.testType }}</td>
+              <td style="color: red;">{{ Number(test.q10 * 100).toFixed(2) }} %</td>
               <td>{{ getResultDescription(test.asdStatus) }}</td>
               <td>{{ (test.confidence * 100).toFixed(2) }}%</td>
+              <td>{{ test.therapies }}</td>
+              <td>{{ test.games }}</td>
             </tr>
           </tbody>
         </table>
@@ -72,17 +76,27 @@ export default {
   },
   methods: {
     async fetchTestResults() {
-      try {
-        const token = Cookies.get('token');
-        const response = await axios.get(`http://localhost:8080/api/v1/aex/tests`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        this.testResults = response.data;
-        console.log(response);
-      } catch (error) {
-        console.error("Error fetching test results:", error);
-      }
-    },
+    try {
+      const token = Cookies.get('token');
+      const response = await axios.get(`http://localhost:8080/api/v1/aex/lists`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      this.testResults = response.data.map(test => ({
+        id: test.id,
+        testDate: test.testDate,
+        asdStatus: test.vid_res, 
+        confidence: test.vid_confid,
+        q10: test.q10,
+        therapies: test.suggested_therapies,
+        games: test.suggested_games
+      }));
+
+    } catch (error) {
+      console.error("Error fetching test results:", error);
+    }
+  },
+
 
     async fetchChildren() {
       try {
@@ -111,10 +125,11 @@ export default {
     async checkActiveSession() {
       const activeChild = this.children.find(child => child.activeSession);
       if (activeChild) {
-        // Set cookies for the first active child
         Cookies.set('child_id', activeChild.id);
         Cookies.set('child_name', activeChild.name);
-        this.childName = activeChild.name; // Ensure you set the childName correctly
+        Cookies.set('child_age', activeChild.age);
+        Cookies.set('child_gender', activeChild.gender);
+        this.childName = activeChild.name;
       } else if (this.children.length > 0) {
         await this.toggleActiveSession(this.children[0].id, this.children[0].name);
       }

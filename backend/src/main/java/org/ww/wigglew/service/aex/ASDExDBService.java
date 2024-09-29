@@ -20,36 +20,6 @@ public class ASDExDBService {
         this.asdExRepository = asdExRepository;
     }
 
-    public ASDExEntity saveASDExEntity(String username, String testType, String asdStatus, String confidence, String requestID) {
-        ASDExEntity entity = new ASDExEntity();
-        entity.setUsername(username);
-        entity.setTestType(testType);
-        entity.setAsdStatus(asdStatus);
-        entity.setConfidence(confidence);
-        entity.setTestDate(LocalDateTime.now());
-
-        return asdExRepository.save(entity);
-    }
-
-    public List<ASDExEntity> getASDExEntitiesByUsername(String username) {
-        return asdExRepository.findByUsername(username);
-    }
-
-    public Optional<ASDExEntity> getASDExEntityById(String id) {
-        return asdExRepository.findById(id);
-    }
-
-    public ASDExEntity updateASDExEntity(String id, String asdStatus, String confidence) {
-        Optional<ASDExEntity> optionalEntity = asdExRepository.findById(id);
-        if (optionalEntity.isPresent()) {
-            ASDExEntity entity = optionalEntity.get();
-            entity.setAsdStatus(asdStatus);
-            entity.setConfidence(confidence);
-            return asdExRepository.save(entity);
-        }
-        throw new RuntimeException("Entity with id " + id + " not found");
-    }
-
     public void deleteASDExEntity(String id) {
         asdExRepository.deleteById(id);
     }
@@ -72,10 +42,12 @@ public class ASDExDBService {
             map.put("id", document.getId());
             map.put("username", document.getUsername());
             map.put("requestID", document.getRequestID());
-            map.put("testType", document.getTestType());
             map.put("testDate", document.getTestDate());
-            map.put("asdStatus", document.getAsdStatus());
-            map.put("confidence", document.getConfidence());
+            map.put("q10_res", document.getQ10());
+            map.put("video_res", document.getVid_res());
+            map.put("video_confidence", document.getVid_confid());
+            map.put("suggested_therapies", document.getSuggested_therapies());
+            map.put("suggested_games", document.getSuggested_games());
         }
         return map;
     }
