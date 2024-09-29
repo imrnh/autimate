@@ -128,7 +128,6 @@ export default {
     };
   },
   mounted() {
-    // Read data from cookies and store in variables
     this.childId = Cookies.get('childId');
     this.childName = Cookies.get('child_name');
   },

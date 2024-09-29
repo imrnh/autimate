@@ -1,12 +1,11 @@
-import uuid
 import numpy as np
 import onnxruntime as ort
 from http import HTTPStatus
 
-from bvid_fn.video_onnx_proc import get_video_tensor
+from ai_fn.video_onnx_proc import get_video_tensor
 
 
-def autism_prediction(model_path, video_path):
+def video_autism_prediction(model_path, video_path):
     # Data preperation
     video_tensor = get_video_tensor(video_path)
     video_tensor = np.expand_dims(video_tensor, 0)
