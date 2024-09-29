@@ -1,9 +1,12 @@
 package org.ww.wigglew.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.ww.wigglew.controller.DoctorController;
 import org.ww.wigglew.entity.doctor.DoctorEntity;
 import org.ww.wigglew.models.response.DoctorResponse;
 import org.ww.wigglew.repo.DoctorsRepository;
@@ -11,10 +14,7 @@ import org.ww.wigglew.service.geocoding.IpGeolocation;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Comparator;
+import java.util.*;
 
 import static org.ww.wigglew.service.geocoding.ForwardGeoCoding.getLocationData;
 
@@ -126,6 +126,8 @@ public class DoctorManagerService {
                 existingDoctor.setOfficeHours(updatedDoctor.getOfficeHours());
                 existingDoctor.setWebsite(updatedDoctor.getWebsite());
                 existingDoctor.setAddress(updatedDoctor.getAddress());
+                existingDoctor.setRatings(updatedDoctor.getRatings());
+
                 // Retain previous image if no new image is provided
                 if (image != null && !image.isEmpty()) {
                     String imageUrl = uploadImage(image);
@@ -153,22 +155,33 @@ public class DoctorManagerService {
         }
     }
 
-    public ResponseEntity<?> getAllDoctors(String ip) {
+    public ResponseEntity<?> getAllDoctors(String ip, boolean ipSorted) {
         try {
             List<DoctorEntity> doctors = doctorsRepository.findAll();
 
             // If IP address is not null, find lon, lat and sort the doctors.
-            if (!ip.isEmpty()) {
-                Map<String, String> geoResponse = IpGeolocation.getGeolocationFromIP(ip);
-                if (geoResponse.get("error") != null && geoResponse.get("exception") != null) {
-                    double userLongitude = Double.parseDouble(geoResponse.get("longitude"));
-                    double userLatitude = Double.parseDouble(geoResponse.get("latitude"));
+            if(ipSorted){
+                if (!ip.isEmpty()) {
+                    Map<String, String> geoResponse = IpGeolocation.getGeolocationFromIP(ip);
+                    if (geoResponse.get("error") == null && geoResponse.get("exception") == null) {
+                        double userLongitude = Double.parseDouble(geoResponse.get("longitude"));
+                        double userLatitude = Double.parseDouble(geoResponse.get("latitude"));
 
-                    // Sort doctors by distance using the Haversine formula
-                    doctors.sort(Comparator.comparingDouble(doctor -> IpGeolocation.calculateDistance(userLatitude, userLongitude,
-                            Double.parseDouble(doctor.getLatitude()), Double.parseDouble(doctor.getLongitude()))));
+                        // Sort doctors by distance using the Haversine formula
+                        doctors.sort(Comparator.comparingDouble(doctor -> IpGeolocation.calculateDistance(userLatitude, userLongitude,
+                                Double.parseDouble(doctor.getLatitude()), Double.parseDouble(doctor.getLongitude()))));
+                    }
                 }
             }
+            // rating based sorting.
+            else {
+                doctors.sort((doctor1, doctor2) -> {
+                    Double rating1 = doctor1.getRatings() != null ? doctor1.getRatings() : 0.0;
+                    Double rating2 = doctor2.getRatings() != null ? doctor2.getRatings() : 0.0;
+                    return rating2.compareTo(rating1);
+                });
+            }
+
 
             return ResponseEntity.ok(doctors);
         } catch (Exception e) {

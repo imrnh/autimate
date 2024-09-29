@@ -18,6 +18,7 @@ public class DoctorEntity {
     private String description;
     private String experienceCount; //example: 19 years
     private String gender;
+    private Double ratings;
     private String specialities;
     private String image; //url
     private String officeHours;

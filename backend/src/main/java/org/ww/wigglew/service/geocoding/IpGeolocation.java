@@ -42,7 +42,7 @@ public class IpGeolocation {
     }
 
     public static double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
-        final int EARTH_RADIUS = 6371; // Radius of the Earth in kilometers
+        final int EARTH_RADIUS = 6371 * 1000; // Radius of the Earth in kilometers
 
         // Convert degrees to radians
         double dLat = Math.toRadians(lat2 - lat1);
@@ -56,13 +56,5 @@ public class IpGeolocation {
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
         return EARTH_RADIUS * c; // Distance in kilometers
-    }
-    public static void main(String[] args) {
-//        System.out.println(getGeolocationFromIP("162.12.212.17").get("exception"));
-
-        System.out.println(Double.parseDouble("0"));
-
-        System.out.println(calculateDistance(29.45, 12.84, 0, 0));;
-
     }
 }

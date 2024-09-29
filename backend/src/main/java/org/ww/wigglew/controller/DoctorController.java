@@ -1,6 +1,9 @@
 package org.ww.wigglew.controller;
 
 
+import org.slf4j.ILoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -24,6 +27,7 @@ public class DoctorController {
 
     @Autowired
     private BucketStorageService bucketStorageService;
+
 
     private boolean validateAuthority(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -53,12 +57,6 @@ public class DoctorController {
         return doctorManagerService.deleteDoctor(id);
     }
 
-//    @PutMapping("/update/{id}")
-//    public ResponseEntity<?> updateDoctor(@PathVariable String id, @RequestBody DoctorEntity doctorEntity) {
-//        if (validateAuthority()) return ResponseEntity.status(403).body("Forbidden");
-//        return doctorManagerService.updateDoctor(id, doctorEntity);
-//    }
-
     @PutMapping("/update/{id}")
     public ResponseEntity<?> updateDoctor(
             @PathVariable String id,
@@ -74,8 +72,13 @@ public class DoctorController {
         return doctorManagerService.getDoctor(id);
     }
 
-    @GetMapping("/get-all")
+    @GetMapping("/list/nearby")
     public ResponseEntity<?> getAllDoctors(@RequestHeader("X-IP-Address") String ip) {
-        return doctorManagerService.getAllDoctors(ip);
+        return doctorManagerService.getAllDoctors(ip, true); //sorted by IP.
+    }
+
+    @GetMapping("/list/ratings")
+    public ResponseEntity<?> getAllDoctors() {
+        return doctorManagerService.getAllDoctors("", false); //default sorting is by ratings. ip sorting = false.
     }
 }
