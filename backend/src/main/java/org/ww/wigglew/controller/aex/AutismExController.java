@@ -23,6 +23,7 @@ import java.util.Map;
 //import com.thjavafest.wigglewonders.Wigglewonders.services.BucketStorageService;
 
 
+import org.ww.wigglew.config.jwt.JWTExtractorService;
 import org.ww.wigglew.entity.aex.ASDExEntity;
 import org.ww.wigglew.entity.aex.QuestionExamEntity;
 import org.ww.wigglew.repo.aex.ASDExRepository;
@@ -49,18 +50,22 @@ public class AutismExController {
     @Autowired
     ASDExServerlessInvokeService asdExServerlessInvokeService;
 
+    @Autowired
+    private JWTExtractorService jwtExtractorService;
+
     @Value("${SERVERLESS_ML_VIDEO_URL}")
     private String serverlessBaseUrl;
 
     @PostMapping("/questions")
-    public String submitQuestionnaire(@RequestBody QuestionExamEntity questionnaire) {
-        String username = "110011";
+    public String submitQuestionnaire(@RequestHeader("Authorization") String jwtToken, @RequestBody QuestionExamEntity questionnaire) {
+        String token = jwtToken.substring(7);
+        String username = jwtExtractorService.extractUsername(token);
+
         String testType = "Questionnaire";
         String confidence = autismExQ10Service.q10Test(questionnaire);
         String asdStatus = Double.parseDouble(confidence) > 0.5 ? "1" : "0";
-        String requestID = "";
 
-        ASDExEntity savedEntity = asdExDBService.saveASDExEntity(username, testType, asdStatus, confidence, requestID);
+        ASDExEntity savedEntity = asdExDBService.saveASDExEntity(username, testType, asdStatus, confidence, ""); //null request id.
         ResponseEntity.ok(savedEntity);
         return confidence;
     }

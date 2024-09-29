@@ -22,10 +22,13 @@ public class ChildService {
     @Autowired
     private JWTExtractorService jwtExtractorService;
 
-    public AuthenticationResponse addChild(String jwtToken, String childName, LocalDate dob) {
-        String phone = jwtExtractorService.extractUsername(jwtToken);
-        UserEntity user = userRepository.findByPhone(phone).orElseThrow(() -> new RuntimeException("User not found"));
+    private UserEntity getUserFromToken(String token){
+        String phone = jwtExtractorService.extractUsername(token.substring(7));
+        return userRepository.findByPhone(phone).orElseThrow(() -> new RuntimeException("User not found"));
+    }
 
+    public AuthenticationResponse addChild(String token, String childName, LocalDate dob) {
+        UserEntity user = getUserFromToken(token);
         Child newChild = Child.builder()
                 .id(UUID.randomUUID().toString())
                 .name(childName)
@@ -42,9 +45,8 @@ public class ChildService {
                 .build();
     }
 
-    public AuthenticationResponse toggleActiveSession(String jwtToken, String childId) {
-        String phone = jwtExtractorService.extractUsername(jwtToken);
-        UserEntity user = userRepository.findByPhone(phone).orElseThrow(() -> new RuntimeException("User not found"));
+    public AuthenticationResponse toggleActiveSession(String token, String childId) {
+        UserEntity user = getUserFromToken(token);
 
         // Ensure only one child has an active session at a time
         for (Child child : user.getChildren()) {
@@ -59,20 +61,28 @@ public class ChildService {
                 .build();
     }
 
-    public List<Child> getChildren(String jwtToken) {
-        String phone = jwtExtractorService.extractUsername(jwtToken);
-        UserEntity user = userRepository.findByPhone(phone)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public List<Child> getChildren(String token) {
+        UserEntity user = getUserFromToken(token);
 
         return user.getChildren();
     }
 
-    public void deleteChild(String jwtToken, String childId) {
-        String phone = jwtExtractorService.extractUsername(jwtToken);
-        UserEntity user = userRepository.findByPhone(phone)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public void deleteChild(String token, String childId) {
+        UserEntity user = getUserFromToken(token);
 
         user.getChildren().removeIf(child -> child.getId().equals(childId));
         userRepository.save(user);
     }
+
+
+    public String getActiveChild(String token) {
+        UserEntity user = getUserFromToken(token);
+
+        return user.getChildren().stream()
+                .filter(Child::isActiveSession)
+                .map(Child::getId)
+                .findFirst()
+                .orElse(null); // Return null if no child is active
+    }
+
 }

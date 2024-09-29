@@ -23,38 +23,44 @@ public class ChildController {
 
     @PostMapping("/add")
     public ResponseEntity<AuthenticationResponse> addChild(
-            @RequestHeader("Authorization") String jwtToken,
+            @RequestHeader("Authorization") String token,
             @RequestBody ChildRequest childRequest)
     {
-        AuthenticationResponse response = childService.addChild(jwtToken.substring(7),
+        AuthenticationResponse response = childService.addChild(token,
                 childRequest.getName(), childRequest.getDob());
         return ResponseEntity.ok(response);
     }
 
-
     @PostMapping("/toggle_active_session/{childId}")
     public ResponseEntity<AuthenticationResponse> toggleActiveSession(
-            @RequestHeader("Authorization") String jwtToken,
+            @RequestHeader("Authorization") String token,
             @PathVariable String childId) {
-        AuthenticationResponse response = childService.toggleActiveSession(jwtToken.substring(7), childId);
+        AuthenticationResponse response = childService.toggleActiveSession(token, childId);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/list")
     public ResponseEntity<List<Child>> listChildren(
-            @RequestHeader("Authorization") String jwtToken) {
+            @RequestHeader("Authorization") String token) {
 
-        // Call the child service to get the list of children
-        List<Child> children = childService.getChildren(jwtToken.substring(7));
+        List<Child> children = childService.getChildren(token);
         return ResponseEntity.ok(children);
     }
 
     @DeleteMapping("/delete/{childId}")
     public ResponseEntity<String> deleteChild(
-            @RequestHeader("Authorization") String jwtToken,
+            @RequestHeader("Authorization") String token,
             @PathVariable String childId) {
 
-        childService.deleteChild(jwtToken.substring(7), childId);
+        childService.deleteChild(token, childId);
         return ResponseEntity.ok("Child deleted successfully");
+    }
+
+
+    @GetMapping("/active_child/")
+    public ResponseEntity<?> getActiveChild(
+            @RequestHeader("Authorization") String token) {
+        String response = childService.getActiveChild(token);
+        return ResponseEntity.ok(response);
     }
 }
