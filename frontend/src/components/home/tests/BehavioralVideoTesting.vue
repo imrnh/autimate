@@ -2,6 +2,8 @@
 import "../../../css/global.css";
 import "../../../css/page5.css";
 import axios from 'axios';
+import Cookies from 'js-cookie';  // Install js-cookie if you haven't: npm install js-cookie
+
 
 export default {
     data() {
@@ -12,15 +14,31 @@ export default {
             presignedData: {},
             isLoading: false,
             filename: '',
-            buttonText: 'Check Result'
+            buttonText: 'Check Result',
+            questionAnswers: null,
         };
     },
+    mounted() {
+        const questionAnswersQuery = this.$route.query.questionAnswers;
+        if (questionAnswersQuery) {
+            this.questionAnswers = JSON.parse(questionAnswersQuery);
+            // console.log('Question Answers:', this.questionAnswers);
+        }
+    },
+
     methods: {
         async fetchPresignedURL() {
             try {
-                const response = await axios.get('http://localhost:8080/api/ex/pre-signed-url');
+                const token = Cookies.get('token');
+                const response = await axios.get('http://localhost:8080/api/v1/aex/url/presigned', {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+
+                console.log(response)
                 this.presignedData = response.data;
-                this.presignedURL = this.presignedData.presignedUrl;
+                this.presignedURL = this.presignedData.preSignedUrl;
             } catch (error) {
                 console.error("Error fetching presigned URL:", error);
                 alert("Failed to fetch presigned URL. Please try again.");
@@ -45,6 +63,7 @@ export default {
                 this.isLoading = true;
                 this.buttonText = 'Uploading video...';
                 await this.fetchPresignedURL();
+                console.log(this.presignedData)
                 const response = await axios.put(this.presignedURL, this.videoFile, {
                     headers: {
                         'Content-Type': this.videoFile.type,
@@ -56,37 +75,46 @@ export default {
                     this.buttonText = "Check Result";
                 }
 
-                //then invoke the function on the following file.
                 this.buttonText = 'Analysing...';
-                await axios.post(`http://localhost:8080/api/ex/invoke-video-ex/${this.presignedData.uuid}`);
 
-                console.log(this.presignedData.uuid)
+                const token = Cookies.get('token');
+
+                const convertedAnswers = this.questionAnswers.map(answer => {
+                    if (answer === null || answer === undefined || answer === 'undefined') {
+                        return 0; // Convert null and undefined to 0
+                    } else if (answer === "1") {
+                        return 1; // Convert "1" to integer 1
+                    } else if (answer === "0") {
+                        return 0; // Convert "0" to integer 0
+                    } else {
+                        const parsed = parseInt(answer, 10);
+                        return isNaN(parsed) ? 0 : parsed; // Return parsed value or 0 if NaN
+                    }
+                }).filter((_, index) => index < 14); // Filter to get only the first 14
+
+                // Construct the request body
+                const requestBody = {
+                    "arrq10": convertedAnswers,
+                    "video_name": this.presignedData.uuid // Add the UUID as needed
+                };
+
+                // Send the POST request with body
+                const responseInvoke = await axios.post('http://localhost:8080/api/v1/aex/invoke', requestBody, {
+                    headers: {
+                        Authorization: `Bearer ${token}` // Include your token if needed
+                    }
+                });
+
+
+                console.log(responseInvoke);
+
+                const req_id = this.presignedData.uuid.split('.mp4').join('');
 
                 this.sleep(10000).then(async () => {
-                    
-                    //request for the result.
-                    const req_id = this.presignedData.uuid.split('.mp4').join('');
-                    const response = await axios.get(`http://localhost:8080/api/ex/get-result/req-id/${req_id}`);
-                    var rdata = response.data
-
-                    console.log(rdata)
-
-                    var asdStatus = "Negative";
-                    if(rdata.asdStatus == 0){
-                        asdStatus = "Positive";
-                    }
-                    var confidence = rdata.confidence * 100
-                    confidence = parseFloat(confidence.toFixed(2))
-
-
-                    this.isLoading = false;
-                    this.buttonText = 'Check Result';
-
                     this.$router.push({
-                        path: '/dashboard/video-test-result/',
+                        path: '/dashboard/aex/r',
                         query: {
-                            asd_status: asdStatus,
-                            confidence: confidence,
+                            req_id: req_id
                         }
                     });
 
@@ -102,7 +130,7 @@ export default {
         },
         async fetchResult() {
             try {
-                
+
             } catch (error) {
                 console.error('Error fetching the result:', error);
             }
@@ -116,7 +144,8 @@ export default {
 </script>
 
 <template>
-    <section class="all-contents2" style="display: flex; justify-content: baseline; align-items: center;">
+    <section class="all-contents2"
+        style="display: flex; justify-content: baseline; align-items: center; width: calc(100vw - 280px);">
         <div class="heading-frame" style="display: flex; align-items: flex-start; justify-content: flex-start;">
             <h1 class="heading2" style="font-size: 50px;">Behavioral Video Analysis</h1>
         </div>

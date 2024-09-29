@@ -36,9 +36,8 @@ const routes = [
     children: [
       { path: '', redirect: '/dashboard/home' }, // Default child route
       { path: 'home', component: Home },
-      { path: 'test-q', component: QuestionnaireTesting },
-      { path: 'test-video', component: BehavioralVideoTesting },
-      { path: 'aex', component: AexTestResult, props: true },
+      { path: 'aex/q', component: QuestionnaireTesting },
+      { path: 'aex/video', component: BehavioralVideoTesting, props: true },
       { path: 'aex/r', component: AexTestResult, props: true },
       { path: 'therapy', component: Therapy },
       { path: 'game', component: GameHome },

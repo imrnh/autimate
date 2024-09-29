@@ -38,7 +38,7 @@ import org.ww.wigglew.service.aex.AutismExQ10Service;
 import org.ww.wigglew.service.BucketStorageService;
 
 @RestController
-@RequestMapping("/api/v1/aex/")
+@RequestMapping("/api/v1/aex")
 public class AutismExController {
     @Autowired
     AutismExQ10Service autismExQ10Service;
@@ -69,30 +69,24 @@ public class AutismExController {
 
     private static final Logger logger = LoggerFactory.getLogger(AutismExController.class);
 
-    @GetMapping("/invoke")
+    @PostMapping("/invoke")
     public ResponseEntity<?> invokeServerless(@RequestBody AsdExRequest asdExRequest, @RequestHeader("Authorization") String jwtToken) {
-        logger.info("Received /invoke request");
         try {
             String childId = childService.getActiveChild(jwtToken);
-            logger.debug("Child ID: {}", childId);
 
             asdExRequest.setChildId(childId);
             asdExRequest.setSecret_token(serverlessSecretToken);
 
             String serverlessUrl = "https://hossen1907012--autism-video-analysis-fn-main.modal.run";
-            logger.info("Invoking serverless function at {}", serverlessUrl);
 
             String err = asdExServerlessInvokeService.invokeServerless(serverlessUrl, asdExRequest);
 
             if (err == null) {
-                logger.info("Serverless invocation successful");
                 return ResponseEntity.ok("Invocation successful");
             } else {
-                logger.error("Serverless invocation failed with error: {}", err);
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invocation failed");
             }
         } catch (Exception e) {
-            logger.error("Exception during /invoke processing", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal server error");
         }
     }
@@ -105,62 +99,45 @@ public class AutismExController {
         return bucketStorageService.getPreSignedUrl("mp4");
     }
 
-//    @PostMapping("/serverless/invoke/{video_path}")
-//    public HttpStatus invokeServerless(@PathVariable String video_path) throws Exception {
-//        Map<String, String> queryParams = Map.of(
-//                "username", "110011",
-//                "video_name", video_path
-//        );
-//
-//        String err = asdExServerlessInvokeService.invokeServerless(serverlessBaseUrl, queryParams);
-//
-//        if (err == null){
-//            return HttpStatus.OK;
-//        }
-//        return HttpStatus.BAD_REQUEST;
-//    }
-    //
-//    @PostMapping("/questions")
-//    public String submitQuestionnaire(@RequestHeader("Authorization") String jwtToken, @RequestBody QuestionExamEntity questionnaire) {
-//        String token = jwtToken.substring(7);
-//        String username = jwtExtractorService.extractUsername(token);
-//
-//        String testType = "Questionnaire";
-//        String confidence = autismExQ10Service.q10Test(questionnaire);
-//        String asdStatus = Double.parseDouble(confidence) > 0.5 ? "1" : "0";
-//
-//        ASDExEntity savedEntity = asdExDBService.saveASDExEntity(username, testType, asdStatus, confidence, ""); //null request id.
-//        ResponseEntity.ok(savedEntity);
-//        return confidence;
-//    }
-//
-//
 
+    @GetMapping("/lists")
+    public ResponseEntity<?> getAllTest(@RequestHeader("Authorization") String jwtToken) {
+        logger.info("Received GET /lists request");
+        try {
+            String childId = childService.getActiveChild(jwtToken);
+            logger.debug("Child ID: {}", childId);
 
-
-    @GetMapping("/tests")
-    public ResponseEntity<?> getAllTest(@RequestHeader("Authorization") String jwtToken){
-        String childId = childService.getActiveChild(jwtToken);
-        if(childId != null){
-            return ResponseEntity.ok(asdExRepository.findByUsername(childId));
+            if (childId != null) {
+                List<ASDExEntity> tests = asdExRepository.findByUsername(childId);
+                logger.info("Found {} tests for child ID {}", tests.size(), childId);
+                return ResponseEntity.ok(tests);
+            } else {
+                logger.warn("No child found for JWT token");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No child found");
+            }
+        } catch (Exception e) {
+            logger.error("Exception in /lists endpoint", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal server error");
         }
-        return ResponseEntity.status(400).body("No child found");
     }
-
-
-    /**
-     * @return List all the tests the user has conducted.
-     */
-    @GetMapping("/results/username/{username}")
-    public List<HashMap<String, Object>> getDocumentsByUsername(@PathVariable String username) {
-        return asdExDBService.getDocumentsByUsername(username);
-    }
-
     /**
      * @return Return a single test's result. Necessary for Video Invoking.
      */
-    @GetMapping("/result/{requestID}")
-    public HashMap<String, Object> getDocumentByRequestID(@PathVariable String requestID) {
-        return asdExDBService.getDocumentByRequestID(requestID);
+    @GetMapping("/res/{requestID}")
+    public ResponseEntity<?> getDocumentByRequestID(@PathVariable String requestID) {
+        logger.info("Received GET /result/{} request", requestID);
+        try {
+            HashMap<String, Object> document = asdExDBService.getDocumentByRequestID(requestID);
+            if (document != null && !document.isEmpty()) {
+                logger.info("Found document for requestID: {}", requestID);
+                return ResponseEntity.ok(document);
+            } else {
+                logger.warn("No document found for requestID: {}", requestID);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No document found");
+            }
+        } catch (Exception e) {
+            logger.error("Exception occurred while fetching document for requestID: {}", requestID, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while fetching the document");
+        }
     }
 }
