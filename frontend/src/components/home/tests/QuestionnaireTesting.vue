@@ -149,12 +149,12 @@ export default {
         return sum + value;
       }, 0);
 
-      this.answers = this.answers.map((value, index) => {
-        if (index >= 0 && index <= 9) {
-          return (value < 3) ? 1 : 0;
-        }
-        return value;
-      });
+      // this.answers = this.answers.map((value, index) => {
+      //   if (index >= 0 && index <= 9) {
+      //     return (value < 3) ? 1 : 0;
+      //   }
+      //   return value;
+      // });
 
 
       const response = await axios.post("http://localhost:8080/api/ex/q10", {

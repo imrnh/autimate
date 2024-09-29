@@ -13,11 +13,11 @@ import '../../css/page3.css';
           </div>
           <div class="name-parent"
             style="width: 228px; position: absolute; margin-left: -41px; display: flex; align-items: center; justify-content: center; margin-top: 90px;">
-            <h3 class="name3" style="font-size: 20px; color: white;">Full Name</h3>
+            <h3 class="name3" style="font-size: 20px; color: white;">{{ childName }}</h3>
             <div class="title">
-              <button @click="$emit('openModal')"
+              <!-- <button @click="$emit('openModal')"
                 style="font-size: 10px; background-color: transparent; color: gray; margin-top: -12px;">Change child
-                profile</button>
+                profile</button> -->
 
             </div>
           </div>
@@ -121,10 +121,22 @@ import Cookies from 'js-cookie';
 
 export default {
   name: 'Dashboard',
+  data() {
+    return {
+      childId: null,
+      childName: null
+    };
+  },
+  mounted() {
+    this.childId = Cookies.get('childId');
+    this.childName = Cookies.get('child_name');
+  },
   methods: {
     logout() {
       Cookies.remove('token');
       Cookies.remove('name');
+      Cookies.remove('childId');  // Optionally remove childId cookie on logout
+      Cookies.remove('child_name'); // Optionally remove child_name cookie on logout
 
       this.$router.push({
         path: '/auth'

@@ -27,6 +27,7 @@ import org.ww.wigglew.config.jwt.JWTExtractorService;
 import org.ww.wigglew.entity.aex.ASDExEntity;
 import org.ww.wigglew.entity.aex.QuestionExamEntity;
 import org.ww.wigglew.repo.aex.ASDExRepository;
+import org.ww.wigglew.service.ChildService;
 import org.ww.wigglew.service.aex.ASDExDBService;
 import org.ww.wigglew.service.aex.ASDExServerlessInvokeService;
 import org.ww.wigglew.service.aex.AutismExQ10Service;
@@ -53,8 +54,12 @@ public class AutismExController {
     @Autowired
     private JWTExtractorService jwtExtractorService;
 
+    @Autowired
+    private ChildService childService;
+
     @Value("${SERVERLESS_ML_VIDEO_URL}")
     private String serverlessBaseUrl;
+
 
     @PostMapping("/questions")
     public String submitQuestionnaire(@RequestHeader("Authorization") String jwtToken, @RequestBody QuestionExamEntity questionnaire) {
@@ -91,9 +96,13 @@ public class AutismExController {
         return HttpStatus.BAD_REQUEST;
     }
 
-    @GetMapping("/tests/{username}")
-    public void getAllTest(@PathVariable String username){
-        List<ASDExEntity> testInfos = asdExRepository.findByUsername(username);
+    @GetMapping("/tests")
+    public ResponseEntity<?> getAllTest(@RequestHeader("Authorization") String jwtToken){
+        String childId = childService.getActiveChild(jwtToken);
+        if(childId != null){
+            return ResponseEntity.ok(asdExRepository.findByUsername(childId));
+        }
+        return ResponseEntity.status(400).body("No child found");
     }
 
 

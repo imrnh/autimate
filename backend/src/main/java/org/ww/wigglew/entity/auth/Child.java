@@ -11,6 +11,7 @@ import java.util.UUID;
 public class Child {
     private String id;
     private String name;
+    private int gender; //male = 1, female = 0
     private LocalDate dob;
     private boolean activeSession;
 

@@ -63,7 +63,6 @@ public class ChildService {
 
     public List<Child> getChildren(String token) {
         UserEntity user = getUserFromToken(token);
-
         return user.getChildren();
     }
 

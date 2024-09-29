@@ -9,6 +9,6 @@ import java.util.Optional;
 
 @RepositoryRestResource
 public interface ASDExRepository extends MongoRepository<ASDExEntity, String> {
-    List<ASDExEntity> findByUsername(String username);
+    List<ASDExEntity> findByUsername(String username); //username is actually just child id.
     Optional<ASDExEntity> findByRequestID(String requestID);
 }

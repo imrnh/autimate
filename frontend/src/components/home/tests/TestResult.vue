@@ -5,17 +5,17 @@ import '../../../css/page6.css';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
-export default {
+export default{
     data() {
-        return {
-            childId: null,
-            childName: null
-        };
-    },
-    mounted() {
-        this.childId = Cookies.get('childId');
-        this.childName = Cookies.get('child_name');
-    },
+    return {
+      childId: null,
+      childName: null
+    };
+  },
+  mounted() {
+    this.childId = Cookies.get('childId');
+    this.childName = Cookies.get('child_name');
+  },
 }
 
 </script>
@@ -23,14 +23,18 @@ export default {
 
 
 <template>
-    <div class="tres_wrapper" style="width: calc(100vw - 400px); display: flex; align-items: center; margin-left: 100px; justify-content: center;">
+    <div class="tres_wrapper" style="width: calc(100vw - 300px);">
+
+        <img class="cardcontent-icon" loading="lazy" alt="" src="@/assets/public/vector-153.svg" />
+
+        <img class="stars-sec-icon" loading="lazy" alt="" src="@/assets/public/vector-155.svg" />
+
         <div class="icn-bxsstar3"></div>
-        <div class="score-details" style="margin-top: 60px; margin-right: -40px;">
+        <div class="score-details">
             <div class="full-name-score">
-                <h3 class="full-names-score" style="font-size: 25px;font-family: 'Poppins'; text-decoration: none; color: rgb(50, 50, 230);">{{ childName }}’s 
-                    <font color="gray" style="font-family: 'Poppins';">Behavioral Analysis Score</font></h3>
+                <h3 class="full-names-score">{{ childName }}’s Score</h3>
             </div>
-            <div class="progress-bars-wrapper" style="margin-top: 50px;">
+            <div class="progress-bars-wrapper">
                 <div class="progress-bars">
                     <div class="progress-bar">
                         <img class="subtract-icon" loading="lazy" alt="" src="@/assets/public/subtract.svg" />
@@ -42,17 +46,15 @@ export default {
                     <b class="link">66%</b>
                 </div>
             </div>
-
             <div class="advice">
-                <div class="adviceneed-improvement-wrapper" style="margin-top: 50px;">
-                    <div class="adviceneed-improvement" style="font-family: 'Inter'">
-                        Needs Improvement
+                <div class="adviceneed-improvement-wrapper">
+                    <div class="adviceneed-improvement">
+                        [Advice]:Need Improvement
                     </div>
                 </div>
-                <div class="click-here-to-container" style="font-size: 20px;">
-                   <router-link to="/dashboard/doctors">
-                    Check nearby doctors.
-                   </router-link>
+                <div class="click-here-to-container">
+                    <span class="click-here">Click Here</span> to find nearby
+                    doctors for further assesments
                 </div>
             </div>
         </div>
@@ -90,9 +92,7 @@ export default {
                         <img class="up-kontur-34-icon" loading="lazy" alt="" src="@/assets/public/down--kontur7.svg" />
                     </div>
                 </div>
-                <!-- 
-                <div class="details">
-
+                <!-- <div class="details">
                     <div class="user">
                         <div class="paragraph-sec">100</div>
                         <div class="user-name">
@@ -128,29 +128,6 @@ export default {
                 </div> -->
             </div>
         </div>
-        
-
-        <div class="sugg_therapies">
-            <h4 style="font-size: 20px; color: blueviolet;">Suggested Therapies & Games</h4>
-            <br>
-            <ul style="font-size: 17px; margin-left: 20px; color: orangered;">
-                <li>Memory therapy</li>
-                <li>Speech therapy</li>
-            </ul>
-        </div>
 
     </div>
 </template>
-
-
-<style>
-.sugg_therapies{
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    margin-right: 120px;
-    font-family: 'Poppins';
-    margin-bottom: 50vh;
-}
-
-</style>

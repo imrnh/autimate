@@ -24,7 +24,7 @@ public class JWTGeneratorService extends JWTService {
                 .setClaims(extraClaims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24))
+                .setExpiration(new Date(System.currentTimeMillis() + 100_000_000))
                 .signWith(getSinginKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
