@@ -39,7 +39,7 @@ export default {
             <div class="space_maker"></div>
 
 
-            <section v-if="isTestingModel" class="autism_test_management">
+            <!-- <section v-if="isTestingModel" class="autism_test_management">
                 <div class="select_asd_test">
                     <h4 style="font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">Select preferred test</h4>
                     <br>
@@ -77,7 +77,12 @@ export default {
 
             <section v-if="isTestResultModel" class="test_result_profile">
 
-            </section>
+            </section> -->
+
+
+            
+
+
             <slot></slot>
         </div>
     </div>

@@ -1,13 +1,11 @@
 <template>
   <div class="dashboard">
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
       integrity="sha512-SfTiTlX6kk+qitfevl/7LibUOeJWlt9rbyDn92a1DqWOw9vWG2MFoays0sgObmWazO5BQPiFucnnEAjpAB+/Sw=="
       crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    <!-- Previous Test History -->
-    <section class="previous_test_history">
-      <h1 class="prev_test_h1" style="position: absolute; font-size: 25px; ">Previous test results.</h1>
+    <section class="previous_test_history" v-if="children && children.length > 0">
+      <h1 class="prev_test_h1" style="position: absolute; font-size: 25px;">Previous test results.</h1>
       <br><br>
       <div class="previous_test_results">
         <table class="table table-bordered table-striped">
@@ -37,13 +35,12 @@
       </div>
     </section>
 
-    <section class="child_profiles">
+    <section class="child_profiles" v-if="children && children.length > 0">
       <h2 style="font-size: 20px;">Child Profiles</h2>
       <br>
       <table class="table">
         <tbody>
           <tr v-for="(child, index) in children" :key="child.id">
-
             <td v-if="!child.activeSession" style="width: 170px;">{{ child.name }}</td>
             <td v-if="!child.activeSession">
               <div @click="switchProfile(child)"
@@ -51,14 +48,34 @@
                 <i class="fa fa-toggle-off" aria-hidden="true"></i>
               </div>
             </td>
-
           </tr>
         </tbody>
       </table>
     </section>
 
+    <section v-if="!children || children.length === 0" style="margin-left: 400px; margin-top: 180px;">
+      <h2>Create a Child Profile first</h2>
+      <form id="childForm" style="width: 500px;" @submit.prevent="submitChildForm">
+        <label for="name">Name:</label> <br>
+        <input type="text"
+          style="width: 400px; height: 45px; color: black; background-color: white; border: 0; border-radius: 15px;"
+          id="name" v-model="newChild.name" required><br><br>
 
+        <label for="dob">Date of Birth:</label> <br>
+        <input type="date"
+          style="width: 400px; height: 45px; color: black; background-color: white; border: 0; border-radius: 15px;"
+          id="dob" v-model="newChild.dob" required><br><br>
 
+        <label for="gender">Gender:</label> <br>
+        <select id="gender"
+          style="width: 400px; height: 45px; color: black; background-color: white; border: 0; border-radius: 15px;"
+          v-model="newChild.gender" required>
+          <option value="0">Female</option>
+          <option value="1">Male</option>
+        </select><br><br>
+        <button type="submit">Create Child</button>
+      </form>
+    </section>
   </div>
 </template>
 
@@ -70,33 +87,31 @@ export default {
   data() {
     return {
       testResults: [], // Will hold the fetched test results
-      children: [], // Will hold the fetched child profiles
-      childName: "",
+      children: null,  // Will hold the fetched child profiles
+      newChild: { name: '', dob: '', gender: '' }, // New child profile data
+      selectedFile: null, // File for upload
     };
   },
   methods: {
     async fetchTestResults() {
-    try {
-      const token = Cookies.get('token');
-      const response = await axios.get(`http://localhost:8080/api/v1/aex/lists`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-
-      this.testResults = response.data.map(test => ({
-        id: test.id,
-        testDate: test.testDate,
-        asdStatus: test.vid_res, 
-        confidence: test.vid_confid,
-        q10: test.q10,
-        therapies: test.suggested_therapies,
-        games: test.suggested_games
-      }));
-
-    } catch (error) {
-      console.error("Error fetching test results:", error);
-    }
-  },
-
+      try {
+        const token = Cookies.get('token');
+        const response = await axios.get(`http://localhost:8080/api/v1/aex/lists`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        this.testResults = response.data.map(test => ({
+          id: test.id,
+          testDate: test.testDate,
+          asdStatus: test.vid_res,
+          confidence: test.vid_confid,
+          q10: test.q10,
+          therapies: test.suggested_therapies,
+          games: test.suggested_games
+        }));
+      } catch (error) {
+        console.error("Error fetching test results:", error);
+      }
+    },
 
     async fetchChildren() {
       try {
@@ -104,13 +119,40 @@ export default {
         const response = await axios.get(`http://localhost:8080/api/v1/child/list`, {
           headers: { Authorization: `Bearer ${token}` }
         });
-        this.children = response.data;
+        this.children = response.data || []; // Ensure empty array if null
         this.checkActiveSession();
       } catch (error) {
         console.error("Error fetching child profiles:", error);
       }
     },
-    
+
+    async submitChildForm() {
+      try {
+        const formData = new FormData();
+        formData.append("name", this.newChild.name);
+        formData.append("dob", this.newChild.dob);
+        formData.append("gender", this.newChild.gender);
+        // formData.append("file", this.selectedFile); // Append file
+
+        const token = Cookies.get('token');
+        const response = await axios.post(`http://localhost:8080/api/v1/child/add`, formData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          }
+        });
+
+        alert("Child profile created successfully!");
+        this.fetchChildren(); // Refresh child profiles after creation
+      } catch (error) {
+        console.error("Error creating child profile:", error);
+        alert("Failed to create child profile.");
+      }
+    },
+
+    handleFileUpload(event) {
+      this.selectedFile = event.target.files[0]; // Store the selected file
+    },
+
     formatDate(dateString) {
       const date = new Date(dateString);
       return date.toLocaleDateString('en-US', {
@@ -119,61 +161,39 @@ export default {
         year: 'numeric',
       });
     },
+
     getResultDescription(asdStatus) {
       return asdStatus === "1" ? "Control (no autism)" : "Autism Positive";
     },
+
     async checkActiveSession() {
       const activeChild = this.children.find(child => child.activeSession);
       if (activeChild) {
         Cookies.set('child_id', activeChild.id);
         Cookies.set('child_name', activeChild.name);
-        Cookies.set('child_age', activeChild.age);
-        Cookies.set('child_gender', activeChild.gender);
-        this.childName = activeChild.name;
-      } else if (this.children.length > 0) {
-        await this.toggleActiveSession(this.children[0].id, this.children[0].name);
       }
     },
+
     async switchProfile(child) {
       try {
-        const token = Cookies.get('token'); // Fetch token from cookie
+        const token = Cookies.get('token');
         await axios.post(`http://localhost:8080/api/v1/child/toggle_active_session/${child.id}`, {}, {
           headers: { Authorization: `Bearer ${token}` }
         });
-        // Update the cookie with the new child's id and name
         Cookies.set('child_id', child.id);
         Cookies.set('child_name', child.name);
-        this.childName = child.name; // Set the childName correctly
-        // Reload the page after switching profile
         window.location.reload();
       } catch (error) {
         console.error("Error switching profile:", error);
       }
     },
-    async toggleActiveSession(childId, childName) {
-      try {
-        const token = Cookies.get('token'); // Fetch token from cookie
-        await axios.post(`http://localhost:8080/api/v1/child/toggle_active_session/${childId}`, {}, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        // Save the childId and childName in the cookie
-        Cookies.set('child_id', childId);
-        Cookies.set('child_name', childName);
-        this.childNme = childName;
-      } catch (error) {
-        console.error("Error toggling active session:", error);
-      }
-    },
   },
   mounted() {
-    // Fetch test results and child profiles when the component is mounted
     this.fetchTestResults();
     this.fetchChildren();
   },
 };
 </script>
-
-
 
 <style>
 .dashboard {
@@ -188,7 +208,6 @@ export default {
   width: 800px;
   position: relative;
 }
-
 
 .child_profiles {
   position: absolute;

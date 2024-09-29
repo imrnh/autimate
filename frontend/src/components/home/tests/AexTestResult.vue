@@ -1,7 +1,6 @@
 <script>
 import '../../../css/global.css';
 import '../../../css/page6.css';
-
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
@@ -11,6 +10,9 @@ export default {
             childId: null,
             childName: null,
             req_id: '',
+            confidence: 0,
+            q10_res: 0,
+            video_confidence: 0
         };
     },
     async mounted() {
@@ -28,41 +30,33 @@ export default {
                 });
                 const rdata = response.data;
 
-                {/* this.asdStatus = rdata.asdStatus === 0 ? "Positive" : "Negative";
-        this.confidence = parseFloat((rdata.confidence * 100).toFixed(2)); */}
+                // Assign API response data to component data properties
+                this.confidence = parseFloat((rdata.video_confidence * 100).toFixed(2));
+                this.q10_res = parseFloat(rdata.q10_res);
+                this.video_confidence = parseFloat(rdata.video_confidence);
             } catch (error) {
                 console.error("Error fetching result:", error);
                 alert("Error fetching result. Please try again.");
             }
         }
     }
-}
-
+};
 </script>
-
 
 <template>
     <div class="tres_wrapper"
         style="width: calc(100vw - 400px); display: flex; flex-direction: column; margin-left: 100px; justify-content: center;">
-
-
-
-
-
-
         <img class="cardcontent-icon" loading="lazy" alt="" src="./public/vector-153.svg" />
         <img class="stars-sec-icon" loading="lazy" alt="" src="./public/vector-155.svg" />
 
         <div class="score-details" style="margin-top: 60px; margin-right: -40px;">
             <div class="full-name-score">
                 <h3 class="full-names-score"
-                    style="font-size: 25px;font-family: 'Poppins'; text-decoration: none; color: rgb(50, 50, 230);">{{
-                        childName }}’s
+                    style="font-size: 25px;font-family: 'Poppins'; text-decoration: none; color: rgb(50, 50, 230);">
+                    {{ childName }}’s
                     <font color="gray" style="font-family: 'Poppins';">ASD Test Score</font>
                 </h3>
             </div>
-
-
 
             <div class="row_res">
 
@@ -77,7 +71,7 @@ export default {
 
                                 <img class="progress-bar-item" alt="" src="@/assets/public/ellipse-212.svg" />
                             </div>
-                            <b class="link">66%</b>
+                            <b class="link" style=" margin-top: 18px; margin-left: -30px;">{{ confidence }}%</b>
                         </div>
                     </div>
 
@@ -87,57 +81,34 @@ export default {
                                 Needs Improvement
                             </div>
                         </div>
-
                     </div>
                 </div>
-
-
 
                 <!-- Bar Result -->
                 <div class="bar_result">
                     <div class="chart">
                         <div class="chart-container">
-                            <div class="pagination">
-                                <div class="pagination-controls">
-                                    <img class="up-kontur-34-icon" loading="lazy" alt=""
-                                        src="@/assets/public/up--kontur34.svg" />
-
-                                    <img class="up-kontur-34-icon" loading="lazy" alt=""
-                                        src="@/assets/public/up--kontur35.svg" />
-
-                                    <img class="up-kontur-34-icon" loading="lazy" alt=""
-                                        src="@/assets/public/down--kontur7.svg" />
-                                </div>
-                            </div>
                             <div class="details">
 
-                                <div class="user">
-                                    <div class="paragraph-sec">100</div>
-                                    <div class="user-name">
-                                        <div class="row">50</div>
-                                    </div>
-                                    <div class="colmd">0</div>
-                                </div>
+                                <!-- MCQ -->
+                                <img class="testimonials-card-icon" loading="lazy" alt=""
+                                src="@/assets/public/vector-153.svg" />
                                 <div class="quiz">
                                     <div class="quiz-content">
-                                        <img class="testimonials-card-icon" loading="lazy" alt=""
-                                            src="@/assets/public/vector-153.svg" />
-
                                         <div class="quiz-content-inner">
-                                            <div class="frame-parent11">
-                                                <div class="frame-parent12">
-                                                    <div class="icn-bxsstar-wrapper">
-                                                        <div class="icn-bxsstar4"></div>
-                                                    </div>
-                                                    <div class="mcq1">MCQ</div>
+                                            <div class="frame-parent11" style="max-width: 230px;">
+                                                <div class="">
+                                                    <div class="mcq-bar"
+                                                        :style="{ width: '20px', borderRadius: '15px', height: (300 * q10_res) + 'px', backgroundColor: 'blue' }">
+                                                    </div><br>
+                                                    <div class="mcq-label">MCQ</div>
                                                 </div>
-                                                <div class="frame-parent13">
-                                                    <div class="icn-bxsstar-container">
-                                                        <div class="icn-bxsstar4"></div>
-                                                    </div>
-                                                    <div class="bv11">BV1</div>
+                                                <div class="">
+                                                    <div class="bv1-bar"
+                                                        :style="{ width: '20px', borderRadius: '15px', height: (300 * video_confidence) + 'px', backgroundColor: 'blue' }">
+                                                    </div><br>
+                                                    <div class="bv1-label">BV1</div>
                                                 </div>
-
                                             </div>
                                         </div>
                                     </div>
@@ -157,18 +128,19 @@ export default {
                     Check nearby doctors.
                 </router-link>
             </div>
-            <h3 style="font-size: 20px; margin-top: 15px; color: orangered;">or, Start with suggested therapies and
+            <h3 style="font-size: 20px; margin-top: 25px; color: orangered;">or, Start with suggested therapies and
                 Games</h3>
 
             <div class="therapy_redirects">
-                <button class="therapy_suggestion_button" style="margin-left: -10px;"> Speech Therapy </button>
+                <button class="therapy_suggestion_button" style="margin-left: -10px; margin-top: 30px;"> Social Skill
+                    Therapy </button>
                 <button class="therapy_suggestion_button"> Memory Therapy </button>
             </div>
-
         </div>
 
     </div>
 </template>
+
 
 
 <style>
@@ -209,5 +181,9 @@ export default {
     margin: 10px;
     font-size: 15px;
     box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+
+.mcq-bar {
+    height: v-bind('q10_res') * 300px;
 }
 </style>
