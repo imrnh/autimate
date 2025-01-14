@@ -5,7 +5,7 @@
       crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <section class="previous_test_history" v-if="children && children.length > 0">
-      <h1 class="prev_test_h1" style="position: absolute; font-size: 25px;">Previous test results.</h1>
+      <h1 class="prev_test_h1" style="position: absolute; font-size: 25px;">Previous test results.</h1> <br>
       <br><br>
       <div class="previous_test_results">
         <table class="table table-bordered table-striped">
@@ -41,35 +41,12 @@
         <option v-for="child in children" :key="child.id" :value="child.id">
           {{ child.name }}
         </option>
-        <option value="add_new_child_profile" class="child_profile_adding_button">+ Add New Profile</option> <!-- New option added -->
+        <option value="newchprofile" class="child_profile_adding_button">+ Add New Profile</option>
+        <!-- New option added -->
       </select>
     </section>
 
-    <!-- New child adding form -->
-    <section v-if="!children || children.length === 0" style="margin-left: 400px; margin-top: 180px;">
-      <h2>Create a Child Profile first</h2>
-      <form id="childForm" style="width: 500px;" @submit.prevent="submitChildForm">
-        <label for="name">Name:</label> <br>
-        <input type="text"
-          style="width: 400px; height: 45px; color: black; background-color: white; border: 0; border-radius: 15px;"
-          id="name" v-model="newChild.name" required><br><br>
-
-        <label for="dob">Date of Birth:</label> <br>
-        <input type="date"
-          style="width: 400px; height: 45px; color: black; background-color: white; border: 0; border-radius: 15px;"
-          id="dob" v-model="newChild.dob" required><br><br>
-
-        <label for="gender">Gender:</label> <br>
-        <select id="gender"
-          style="width: 400px; height: 45px; color: black; background-color: white; border: 0; border-radius: 15px;"
-          v-model="newChild.gender" required>
-          <option value="0">Female</option>
-          <option value="1">Male</option>
-        </select><br><br>
-        <button type="submit">Create Child</button>
-      </form>
-    </section>
-
+   
   </div>
 </template>
 
@@ -115,32 +92,9 @@ export default {
           headers: { Authorization: `Bearer ${token}` }
         });
         this.children = response.data || []; // Ensure empty array if null
-        // this.checkActiveSession();
+        this.activateChildSession();
       } catch (error) {
         console.error("Error fetching child profiles:", error);
-      }
-    },
-
-    async submitChildForm() {
-      try {
-        const formData = new FormData();
-        formData.append("name", this.newChild.name);
-        formData.append("dob", this.newChild.dob);
-        formData.append("gender", this.newChild.gender);
-        // formData.append("file", this.selectedFile); // Append file
-
-        const token = Cookies.get('token');
-        const response = await axios.post(`http://localhost:8080/api/v1/child/add`, formData, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          }
-        });
-
-        alert("Child profile created successfully!");
-        this.fetchChildren(); // Refresh child profiles after creation
-      } catch (error) {
-        console.error("Error creating child profile:", error);
-        alert("Failed to create child profile.");
       }
     },
 
@@ -161,20 +115,25 @@ export default {
       return asdStatus === "1" ? "Control (no autism)" : "Autism Positive";
     },
 
-    // async checkActiveSession() {
-    //   const activeChild = this.children.find(child => child.activeSession);
-    //   console.log("Active: ", activeChild);
-    //   if (activeChild) {
-    //     Cookies.set('child_id', activeChild.id);
-    //     Cookies.set('child_name', activeChild.name);
-    //   }
-    // },
+    async activateChildSession() {
+      const activeChild = this.children.find(child => child.activeSession);
+      console.log("Active: ", activeChild);
+
+      if (activeChild) {
+        Cookies.set('child_id', activeChild.id);
+        Cookies.set('child_name', activeChild.name);
+
+        //initialize activeChildId
+        const savedChildId = Cookies.get('child_id');
+        this.activeChildId = savedChildId || (this.children.length ? this.children[0].id : null);
+      }
+    },
 
     handleSelect(event) {
       const selectedId = event.target.value;
-      if (selectedId === "add-new-profile") {
+      if (selectedId === "newchprofile") {
         console.log("Redirecting to add new profile...");
-        this.$router.push('/add-profile'); // Adjust the route to your desired page
+        this.$router.push('newchprofile'); // Adjust the route to your desired page
       } else {
         const selectedChild = this.children.find(child => child.id === selectedId);
         if (selectedChild) {
@@ -183,7 +142,7 @@ export default {
       }
     },
 
-
+    //If a child choosen, update profile
     async switchProfile(child) {
       try {
         console.log('Switching profile to:', child);
@@ -199,13 +158,11 @@ export default {
       }
     },
   },
+
+
   mounted() {
     this.fetchTestResults();
     this.fetchChildren();
-
-    // Initialize activeChildId from the cookie if set
-    const savedChildId = Cookies.get('child_id');
-    this.activeChildId = savedChildId || (this.children.length ? this.children[0].id : null);
   },
 };
 </script>
@@ -233,7 +190,7 @@ export default {
   width: 230px;
 }
 
-.child_selection_bar{
+.child_selection_bar {
   border-radius: 10px;
   width: 170px;
   height: 40px;
@@ -245,7 +202,7 @@ export default {
   margin-right: 30px;
 }
 
-.child_profile_adding_button{
+.child_profile_adding_button {
   color: rgb(11, 174, 65);
 }
 </style>

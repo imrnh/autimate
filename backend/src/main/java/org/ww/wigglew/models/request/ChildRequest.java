@@ -7,4 +7,5 @@ import java.time.LocalDate;
 public class ChildRequest {
     private String name;
     private LocalDate dob;
+    private String gender;
 }
