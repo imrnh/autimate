@@ -136,7 +136,7 @@ export default {
                 <div class="w3_info" style="width: 100%; margin-top: -10px;">
                     <h2>Doctor Details</h2>
                     <form action="#" method="post" style="width: 100%; margin-left: 10px">
-                        <div class="row">
+                        <div>
                             <div class="col-5">
                                 <div class="input-group">
                                     <span><i class="fas fa-phone" aria-hidden="true"></i></span>
@@ -147,11 +147,11 @@ export default {
                             <div class="col-5">
                                 <div class="input-group">
                                     <span><i class="fas fa-user" aria-hidden="true"></i></span>
-                                    <input style="color: black;" v-model="doctorData.name" type="text" placeholder="Name" required>
+                                    <input  style="color: black; width: 300px;" v-model="doctorData.name" type="text" placeholder="Name" required>
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
+                        <div>
 
 
                             <div class="input-group" style="width: 90%;">
@@ -162,7 +162,7 @@ export default {
                         </div>
 
 
-                        <div class="row">
+                        <div>
                             <div class="col-5">
                                 <div class="input-group">
                                     <span><i class="fas fa-briefcase" aria-hidden="true"></i></span>
@@ -185,7 +185,7 @@ export default {
                         </div>
 
 
-                        <div class="row">
+                        <div>
                             <div class="col-5">
                                 <div class="input-group">
                                     <span><i class="fas fa-stethoscope" aria-hidden="true"></i></span>
@@ -205,7 +205,7 @@ export default {
                         </div>
 
 
-                        <div class="row">
+                        <div>
                             <div class="col-5">
 
 
@@ -225,7 +225,7 @@ export default {
                             </div>
                         </div>
 
-                        <div class="row">
+                        <div>
                             <div class="input-group" style="width: 90%;">
                                 <span><i class="fas fa-map" aria-hidden="true"></i></span>
                                 <input style="color: black;" v-model="doctorData.address" type="text" placeholder="Address" required>

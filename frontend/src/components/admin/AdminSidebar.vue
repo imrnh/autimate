@@ -28,17 +28,6 @@ import '../../css/page3.css';
         </div>
         <nav class="pet">
 
-          <div class="discover">
-            <div class="online-doctor-desktop-2-strea-parent">
-              <img class="online-doctor-desktop-2-strea-icon" loading="lazy" alt="" style="width: 20px; height: 20px;"
-                src="@/assets/public/therapy.png" />
-
-              <router-link style="color: white" to="/admin/therapy">
-                <div class="therapy">Therapy</div>
-              </router-link>
-            </div>
-          </div>
-
           <div class="inbox">
             <div class="union-video-chat">
               <div class="sobre-ns-lojas-pet-shop-conta">

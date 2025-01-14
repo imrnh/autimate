@@ -35,24 +35,17 @@
       </div>
     </section>
 
-    <section class="child_profiles" v-if="children && children.length > 0">
-      <h2 style="font-size: 20px;">Child Profiles</h2>
-      <br>
-      <table class="table">
-        <tbody>
-          <tr v-for="(child, index) in children" :key="child.id">
-            <td v-if="!child.activeSession" style="width: 170px;">{{ child.name }}</td>
-            <td v-if="!child.activeSession">
-              <div @click="switchProfile(child)"
-                style="background-color: transparent; color: black; margin-top: 0px; font-size: 20px;">
-                <i class="fa fa-toggle-off" aria-hidden="true"></i>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+    <section class="child_profiles child_profile_card" v-if="children && children.length > 0">
+      <!-- Managing Child Profile -->
+      <select v-model="activeChildId" @change="handleSelect" class="child_selection_bar">
+        <option v-for="child in children" :key="child.id" :value="child.id">
+          {{ child.name }}
+        </option>
+        <option value="add_new_child_profile" class="child_profile_adding_button">+ Add New Profile</option> <!-- New option added -->
+      </select>
     </section>
 
+    <!-- New child adding form -->
     <section v-if="!children || children.length === 0" style="margin-left: 400px; margin-top: 180px;">
       <h2>Create a Child Profile first</h2>
       <form id="childForm" style="width: 500px;" @submit.prevent="submitChildForm">
@@ -76,6 +69,7 @@
         <button type="submit">Create Child</button>
       </form>
     </section>
+
   </div>
 </template>
 
@@ -90,6 +84,7 @@ export default {
       children: null,  // Will hold the fetched child profiles
       newChild: { name: '', dob: '', gender: '' }, // New child profile data
       selectedFile: null, // File for upload
+      activeChildId: null, // Hold the selected active child ID
     };
   },
   methods: {
@@ -120,7 +115,7 @@ export default {
           headers: { Authorization: `Bearer ${token}` }
         });
         this.children = response.data || []; // Ensure empty array if null
-        this.checkActiveSession();
+        // this.checkActiveSession();
       } catch (error) {
         console.error("Error fetching child profiles:", error);
       }
@@ -166,16 +161,32 @@ export default {
       return asdStatus === "1" ? "Control (no autism)" : "Autism Positive";
     },
 
-    async checkActiveSession() {
-      const activeChild = this.children.find(child => child.activeSession);
-      if (activeChild) {
-        Cookies.set('child_id', activeChild.id);
-        Cookies.set('child_name', activeChild.name);
+    // async checkActiveSession() {
+    //   const activeChild = this.children.find(child => child.activeSession);
+    //   console.log("Active: ", activeChild);
+    //   if (activeChild) {
+    //     Cookies.set('child_id', activeChild.id);
+    //     Cookies.set('child_name', activeChild.name);
+    //   }
+    // },
+
+    handleSelect(event) {
+      const selectedId = event.target.value;
+      if (selectedId === "add-new-profile") {
+        console.log("Redirecting to add new profile...");
+        this.$router.push('/add-profile'); // Adjust the route to your desired page
+      } else {
+        const selectedChild = this.children.find(child => child.id === selectedId);
+        if (selectedChild) {
+          this.switchProfile(selectedChild);
+        }
       }
     },
 
+
     async switchProfile(child) {
       try {
+        console.log('Switching profile to:', child);
         const token = Cookies.get('token');
         await axios.post(`http://localhost:8080/api/v1/child/toggle_active_session/${child.id}`, {}, {
           headers: { Authorization: `Bearer ${token}` }
@@ -191,6 +202,10 @@ export default {
   mounted() {
     this.fetchTestResults();
     this.fetchChildren();
+
+    // Initialize activeChildId from the cookie if set
+    const savedChildId = Cookies.get('child_id');
+    this.activeChildId = savedChildId || (this.children.length ? this.children[0].id : null);
   },
 };
 </script>
@@ -216,5 +231,21 @@ export default {
   margin-top: 20px;
   margin-right: 30px;
   width: 230px;
+}
+
+.child_selection_bar{
+  border-radius: 10px;
+  width: 170px;
+  height: 40px;
+  margin-top: 13px;
+  border: 0;
+  padding-left: 10px;
+  position: absolute;
+  right: 0;
+  margin-right: 30px;
+}
+
+.child_profile_adding_button{
+  color: rgb(11, 174, 65);
 }
 </style>

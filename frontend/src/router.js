@@ -82,7 +82,7 @@ const routes = [
     meta: { requiresAuth: true, role: 'admin' }, // Protect with admin role
     children: [
       { path: '', redirect: '/admin/home' }, // Default child route
-      { path: 'home', component: Home },
+      { path: 'home', component: AllDoctors },
       { path: 'doctors', component: AllDoctors },
       { path: 'doctors/add', component: AddDoctor },
     ],
