@@ -1,69 +1,67 @@
 <template>
-
-    
     <div class="container" style="margin-top: 30px; min-width: calc(100vw - 240px);">
-
-        <select name="doctor_sorting" v-model="selectedSorting" @change="onSortingChange" 
+        <select name="doctor_sorting" v-model="selectedSorting" @change="onSortingChange"
             style="width: 200px; height: 40px; border-radius: 10px; background-color: transparent; border: 1px solid gray; color: black; padding-left: 10px;">
             <option value="nearby">Nearest</option>
             <option value="highest-rated">Highest Rated</option>
         </select>
+        <br><br>
 
-        <br>
-        <br>
-        <div class="row" style="display: flex; flex-wrap: wrap; gap: 0px; padding: 0;">
-            <div class="col-md-4" v-for="doctor in doctors" :key="doctor.id" style="width: 500px; height: 330px;">
-                <div class="card mb-4 shadow-sm"
-                    style="border-radius: 15px; overflow: hidden; border: none; padding: 8px;">
-                    <div style="display: flex; flex-direction: row; align-items: center;">
-                        <!-- Doctor Image -->
-                        <img style="width: 180px; height: 180px; object-fit: cover; border-radius: 15px; position: absolute; top: 0; margin-top: 10px;"
-                            :src="doctor.image ? 'http://localhost:8080' + doctor.image : './public/image-3@2x.png'"
-                            alt="Doctor Image">
+        <!-- Header Row -->
+        <div class="list-group-item"
+            style="display: flex; font-weight: bold; padding: 15px; background-color: #f1f1f1;">
+            <div style="width: 10%; text-align: center;">Image</div>
+            <div style="width: 15%;">Name</div>
+            <div style="width: 28%;">Description</div>
+            <div style="width: 15%;">Specialities</div>
+            <div style="width: 17%;">Office Hours</div>
+            <div style="width: 7%;">Experience</div>
+            <div style="width: 8%;">Phone</div>
+        </div>
 
-                        <!-- Doctor Info -->
-                        <div
-                            style="padding: 5px; width: 300px; height: 260px; background-color: #f8f9fa; flex-grow: 1; border-radius: 15px;">
-                            <h5 style="font-weight: 800; font-size: 1.5rem; color: #343a40; 
-                                position: absolute; left: calc(180px + 35px); top: 0; margin-top: 20px;">
-                                {{ doctor.name }}</h5>
+        <div class="list-group">
+            <div class="list-group-item" v-for="doctor in doctors" :key="doctor.id"
+                style="display: flex; align-items: center; padding: 8px; border-radius: 10px; gap: 15px; border: 0; margin-top: 5px;">
 
-                            <p style="position: absolute; top: 0; margin-top: 55px; left: 0; margin-left: 215px;"><i
-                                    style="color: gold" class="fa fa-star" aria-hidden="true"></i> &nbsp;{{
-                                        doctor.ratings || "-" }} </p>
+                <!-- Doctor Image -->
+                <div style="width: 8%; text-align: center;">
+                    <img :src="doctor.image ? 'http://localhost:8080' + doctor.image : './public/image-3@2x.png'"
+                        alt="Doctor Image" style="width: 70px; height: 70px; object-fit: cover; border-radius: 100px; ">
+                </div>
 
-                            <p style="position: absolute; left: calc(180px + 35px); top: 0; margin-top: 80px;">{{
-                                doctor.description || 'No description available' }}</p>
-                            <p
-                                style="position: absolute; left: calc(180px + 35px); top: 0; margin-top: 130px; color: brown; font-weight: 600;">
-                                {{
-                                    doctor.experienceCount || '_' }} experience</p>
-                            <p style="position: absolute; left: calc(180px + 35px); top: 0; margin-top: 155px;"><b
-                                    style="color: blueviolet">Specialities:</b> {{ doctor.specialities || "" }}</p>
+                <!-- Doctor Info -->
+                <div style="width: 15%; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start;">
+                    <h5 style="font-weight: 800; font-size: 1rem; color: #343a40;">{{ doctor.name }}</h5>
+                    <p style="margin-top: 0px; font-size: 10px;">{{ doctor.address }}</p>
+                </div>
 
-                            <p
-                                style="position: absolute; bottom: 0; margin-bottom: 44px; left: 0; margin-left: 15px;color: darkolivegreen;">
-                                <i class="fa fa-map-marker" aria-hidden="true"></i> {{ doctor.address || "" }}<br>
-                            </p>
+                <div style="width: 28%;">
+                    <p>{{ doctor.description || 'No description available' }}</p>
+                </div>
 
-                            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; | &nbsp; &nbsp; &nbsp;
+                <div style="width: 15%;">
+                    <p>{{ doctor.specialities || "" }}</p>
+                </div>
 
-                            <p class="card-text"
-                                style="color: #6c757d; line-height: 1.6; position: absolute; bottom: 0; 
-                                margin-bottom: 15px; left: 0; margin-left: 15px; display: flex; align-items: self-start; justify-content: space-around;">
-                            <p>{{ doctor.phone }}</p> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            <a :href="doctor.website" target="_blank"
-                                style="color: #007bff; text-decoration: none;">Website</a><br>
-                            </p>
+                <div style="width: 17%;">
+                    <p style="margin-top: 10px;">{{ doctor.officeHours }}</p>
+                    <!-- <p style="margin-top: 10px;">{{ doctor.phone }}</p> -->
+                </div>
+                
+                <div style="width: 7%;">
+                    <p style="color: brown; font-weight: 600;">{{ doctor.experienceCount || '_' }} years</p>
+                </div>
 
-                        </div>
-                    </div>
+                <div style="width:8%;">
+                    <p style="color: darkolivegreen;"><i class="fa fa-map-marker" aria-hidden="true"></i> {{
+                        doctor.phone || "" }}</p>
                 </div>
             </div>
         </div>
-
     </div>
 </template>
+
+
 
 <script>
 import '../../../css/global.css';
@@ -121,3 +119,13 @@ export default {
     }
 };
 </script>
+
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+.list-group-item {
+    font-family: "Inter", serif;
+    font-size: 14px;
+}
+</style>

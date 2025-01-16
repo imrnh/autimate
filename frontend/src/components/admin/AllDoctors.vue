@@ -3,45 +3,65 @@
         integrity="sha512-FEQLazq9ecqLN5T6wWq26hCZf7kPqUbFC9vsHNbXMJtSZZWAcbJspT+/NEAQkBfFReZ8r9QlA9JHaAuo28MTJA=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    <div class="doctor_view_wrapper">
-        <br>
-        <router-link to="/admin/doctors/add">
-            <button type="button" class="btn btn-outline-primary"
-                style="position: absolute; right: 0; margin-right: 20px; margin-bottom: 50px;">+ Add new doctor</button>
-        </router-link>
-        <br>
+        <h1 style="position: fixed; margin-top: 25px; margin-left: 6px;">All Doctors</h1>
 
-        <div class="all-contents4" style="width: calc(100vw - 270px); height: 89vh; margin-top: 30px;">
-            <div class="content-items" v-for="doctor in doctors" :key="doctor.id">
-                <div class="item-6" style="border: 1px solid rgb(239, 239, 239); position: relative; height: 330px;">
-                    <div class="bg"></div>
-                    <img class="image-icon3" loading="lazy"
-                        :src="doctor.image ? 'http://localhost:8080' + doctor.image : './public/image-3@2x.png'"
-                        alt="Doctor Image" />
+    <div class="all_doc_view">
 
-                    <div class="profile-info">
-                        <b class="text">{{ doctor.name }}</b>
-                        <!-- <div class="pricing">{{ doctor.experienceCount || 'N/A' }}</div> -->
-                        <div class="location-on-black-24dp-2-parent" style="margin-top: -10px;">
-                            <div class="doane-street-fremont-ca-94538-wrapper">
-                                <div class="doane-street-fremont"
-                                    style="position: absolute; left: 0; margin-left: 10px; margin-top: -2px;">
-                                    <i class="fa fa-map-marker" aria-hidden="true"></i>
-                                    {{ doctor.address || 'Address not available' }}
-                                </div>
+
+        <div class="doctor_card" v-for="doctor in doctors" :key="doctor.id">
+            <!-- <div class="item-6" style="position: relative; height: 330px;" :style="{borderRadius: 0}">
+                <img class="image-icon3" loading="lazy" :style="{borderRadius: 0}"
+                    :src="doctor.image ? 'http://localhost:8080' + doctor.image : './public/image-3@2x.png'"
+                    alt="Doctor Image" />
+
+                <div class="profile-info">
+                    <b class="text">{{ doctor.name }}</b>
+                    <div class="pricing">{{ doctor.experienceCount || 'N/A' }}</div>
+                    <div class="location-on-black-24dp-2-parent" style="margin-top: -10px;">
+                        <div class="doane-street-fremont-ca-94538-wrapper">
+                            <div class="doane-street-fremont"
+                                style="position: absolute; left: 0; margin-left: 10px; margin-top: -2px;">
+                                <i class="fa fa-map-marker" aria-hidden="true"></i>
+                                {{ doctor.address || 'Address not available' }}
                             </div>
                         </div>
-                        <div style="width: 1px; height: 30px;"></div>
-                        <div class="control_buttons">
-                            <button class="edit_doc" @click="editDoctor(doctor)"><i class="fa fa-pencil"
-                                    aria-hidden="true"></i> Edit</button>
-                            <button class="delete_doc" @click="deleteDoctor(doctor.id)"><i class="fa fa-trash-o"
-                                    aria-hidden="true"></i> Delete</button>
-                        </div>
+                    </div>
+                    <div style="width: 1px; height: 30px;"></div>
+                    <div class="control_buttons">
+                        <button class="edit_doc" @click="editDoctor(doctor)"><i class="fa fa-pencil"
+                                aria-hidden="true"></i> Edit</button>
+                        <button class="delete_doc" @click="deleteDoctor(doctor.id)"><i class="fa fa-trash-o"
+                                aria-hidden="true"></i> Delete</button>
                     </div>
                 </div>
+            </div> -->
+
+
+            <div style="display: flex;">
+                <div>
+                    <h1 :style="{ fontSize: '22px', fontWeight: '600', color: 'black' }" class="text">{{ doctor.name }}
+                    </h1> <br>
+
+                    <p style="margin-top: 10px; width: 270px;">{{ doctor.description ? doctor.description.slice(0, 120) + (doctor.description.length > 120 ? '...' : '') : 'No description' }}</p><br>
+
+                    <p>{{ doctor.experienceCount || 'N/A' }} years of Experience</p>
+                </div>
+
+                <img class="doc_image" loading="lazy"
+                    :style="{ borderRadius: 0, width: '110px', height: '110px', borderRadius: '110px', position: 'absolute', top: 0, right: 0, marginRight: '15px', marginTop: '10px' }"
+                    :src="doctor.image ? 'http://localhost:8080' + doctor.image : './public/image-3@2x.png'"
+                    alt="Doctor Image" />
+
+                    <div class="control_buttons">
+                        <button class="edit_doc" @click="editDoctor(doctor)"><i class="fa fa-pencil"
+                                aria-hidden="true"></i> Edit</button>
+                        <button class="delete_doc" @click="deleteDoctor(doctor.id)"><i class="fa fa-trash-o"
+                                aria-hidden="true"></i> Delete</button>
+                    </div>
             </div>
+
         </div>
+
     </div>
 
 </template>
@@ -139,6 +159,30 @@ export default {
 
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+.all_doc_view {
+    width: 100vw;
+    min-height: calc(98vh-100px);
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    margin-top: 100px;
+}
+
+.doctor_card {
+    color: black;
+    font-family: "Inter", serif;
+    margin: 7px;
+    width: 400px;
+    height: 220px;
+    background-color: white;
+    padding: 10px;
+    position: relative;
+    border-radius: 10px;
+}
+
+
 .control_buttons {
     width: 100%;
     height: 30px;
@@ -146,15 +190,15 @@ export default {
     bottom: 0;
     left: 0;
 
-    border-bottom-left-radius: 15px;
-    border-bottom-right-radius: 15px;
+    /* border-bottom-left-radius: 15px; */
+    /* border-bottom-right-radius: 15px; */
 }
 
 .edit_doc {
     width: 50%;
-    background-color: rgb(41, 41, 156);
+    background-color: black;
     border-radius: 0;
-    border-bottom-left-radius: 15px;
+    /* border-bottom-left-radius: 15px; */
     height: 30px;
     font-size: 13px;
     color: white;
@@ -165,7 +209,7 @@ export default {
     width: 50%;
     background-color: rgb(144, 44, 44);
     border-radius: 0;
-    border-bottom-right-radius: 15px;
+    /* border-bottom-right-radius: 15px; */
     height: 30px;
     font-size: 13px;
     color: white;

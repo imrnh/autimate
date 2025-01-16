@@ -1,79 +1,112 @@
 <script setup>
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import Cookies from 'js-cookie';
 import '../../css/global.css';
 import '../../css/page3.css';
+
+const router = useRouter();
+const isMenuOpen = ref(false);
+
+const toggleMenu = () => {
+  isMenuOpen.value = !isMenuOpen.value;
+};
+
+const logout = () => {
+  Cookies.remove('role');
+  Cookies.remove('admin_token');
+  Cookies.remove('admin_name');
+  router.push('/admin/login');
+};
 </script>
 
 <template>
-  <div class="left-side-menu" style="min-width: 230px; height: 97vh;">
-    <div class="frame-parent1">
-      <div class="frame-wrapper">
-        <div class="frame-parent2">
-          <div class="name-parent"
-            style="width: 228px; position: absolute; margin-left: -41px; display: flex; align-items: center; justify-content: center; margin-top: 90px;">
-
-          </div>
-        </div>
-      </div>
-      <br>
-      <div class="options">
-        <div class="discover">
-          <div class="online-doctor-desktop-2-strea-parent">
-            <img class="online-doctor-desktop-2-strea-icon" style="width: 20px; height: 20px;" loading="lazy" alt=""
-              src="@/assets/public/home.png" />
-
-            <router-link style="color: white" to="/dashboard/">
-              <div class="therapy">Home</div>
-            </router-link>
-          </div>
-        </div>
-        <nav class="pet">
-
-          <div class="inbox">
-            <div class="union-video-chat">
-              <div class="sobre-ns-lojas-pet-shop-conta">
-                <img class="group-icon" loading="lazy" style="width: 20px; height: 20px;" alt=""
-                  src="@/assets/public/doctor.png" />
-                <router-link style="color: white" to="/admin/doctors">
-                  <div class="nearby-doctor">Doctors</div>
-                </router-link>
-              </div>
-            </div>
-          </div>
-        </nav>
-
-
+  <nav class="navbar">
+    <div class="nav-container">
+      <button class="menu-toggle" @click="toggleMenu">☰</button>
+      <div class="logo">Admin Panel</div>
+      <div :class="['nav-links', { 'open': isMenuOpen }]">
+        <router-link :style="{marginTop: '10px'}" to="/admin/home/" class="nav-item">Home</router-link>
+        <router-link :style="{marginTop: '10px'}" to="/admin/doctors" class="nav-item">Doctors</router-link>
+        <router-link :style="{marginTop: '10px'}" to="/admin/doctors/add" class="nav-item">Add Doctors</router-link>
+        <button class="nav-item logout" :style="{color: 'red'}" @click="logout">Log Out</button>
       </div>
     </div>
-    <div class="help-support-upload" style="position: absolute; bottom: 0; margin-bottom: 50px;">
-      <div class="shield-upload1">
-        <div class="sobre-ns-lojas-pet-shop-conta">
-          <img class="medical-instrument-stethoscope-icon" loading="lazy" alt=""
-            src="@/assets/public/uploadoutline.svg" />
-          <div class="log-out" @click="logout" style="cursor: pointer;">Log Out</div>
-        </div>
-      </div>
-    </div>
-  </div>
+  </nav>
 </template>
 
+<style scoped>
+.navbar {
+  background-color: #2c3e50;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: white;
+  margin-top: -6px;
+  margin-left: -15px;
+  width: calc(100vw + 15px);
+}
 
-<script>
-import Cookies from 'js-cookie';
+.nav-container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
 
-export default {
-  name: 'AdminDashboard',
-  methods: {
-    logout() {
-      // Delete cookies
-      Cookies.remove('role');
-      Cookies.remove('admin_token');
-      Cookies.remove('admin_name');
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  flex-grow: 1;
+}
 
-      // Redirect to login page or any other page
-      this.$router.push({
-        path: '/admin/login'
-      });
-    }
+.nav-links {
+  display: flex;
+  gap: 15px;
+}
+
+.nav-item {
+  color: white;
+  text-decoration: none;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.logout {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: white;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .menu-toggle {
+    display: block;
   }
-};
-</script>
+
+  .nav-links {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 60px;
+    left: 0;
+    width: 100%;
+    background-color: #2c3e50;
+    padding: 10px;
+  }
+
+  .nav-links.open {
+    display: flex;
+  }
+}
+</style>
