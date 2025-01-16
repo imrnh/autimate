@@ -154,7 +154,10 @@ import '../css/page.css';
           </div>
         </div>
       </div>
-      <div class="partners">
+
+
+      <!-- <section>
+        <div class="partners">
         <div class="partners-title">
           <h1 class="motivation-partners">MOTIVATION PARTNERS</h1>
         </div>
@@ -171,6 +174,9 @@ import '../css/page.css';
           <img class="image-135-icon" loading="lazy" alt="" src="../assets/public/image-135@2x.png" />
         </div>
       </div>
+      </section> -->
+
+
       <div class="content">
         <div class="base-parent">
           <div class="base"></div>

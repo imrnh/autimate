@@ -72,8 +72,6 @@ def to_tensor(buffer):
     return buffer.transpose((3, 0, 1, 2))
 
 
-
-
 def crop(buffer, clip_len, crop_size, crop_size2):
     time_index = max(0, math.floor((buffer.shape[0] - clip_len) / 2))
     height_index = max(0, math.floor((buffer.shape[1] - crop_size) / 2))

@@ -30,8 +30,10 @@ import org.ww.wigglew.config.jwt.JWTExtractorService;
 import org.ww.wigglew.entity.aex.ASDExEntity;
 import org.ww.wigglew.entity.aex.QuestionExamEntity;
 import org.ww.wigglew.models.request.AsdExRequest;
+import org.ww.wigglew.models.request.TherapySuggestionPromptStringRequest;
 import org.ww.wigglew.repo.aex.ASDExRepository;
 import org.ww.wigglew.service.ChildService;
+import org.ww.wigglew.service.TherapySuggestionAPIService;
 import org.ww.wigglew.service.aex.ASDExDBService;
 import org.ww.wigglew.service.aex.ASDExServerlessInvokeService;
 import org.ww.wigglew.service.aex.AutismExQ10Service;
@@ -54,6 +56,9 @@ public class AutismExController {
 
     @Autowired
     ASDExServerlessInvokeService asdExServerlessInvokeService;
+
+    @Autowired
+    TherapySuggestionAPIService therapySuggestionAPIService;
 
     @Autowired
     private JWTExtractorService jwtExtractorService;
@@ -81,6 +86,27 @@ public class AutismExController {
 
             String err = asdExServerlessInvokeService.invokeServerless(serverlessUrl, asdExRequest);
 
+            if (err == null) {
+                return ResponseEntity.ok("Invocation successful");
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invocation failed");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal server error");
+        }
+    }
+
+
+    @PostMapping("/therapy_suggestion")
+    public ResponseEntity<?> getTherapySuggestion(@RequestBody TherapySuggestionPromptStringRequest suggestionPromptStr, @RequestHeader("Authorization") String jwtToken){
+        try {
+            String childId = childService.getActiveChild(jwtToken);
+            suggestionPromptStr.setChildId(childId);
+
+            //request gpt.
+
+
+            String err = null; // dummy. remove must.
             if (err == null) {
                 return ResponseEntity.ok("Invocation successful");
             } else {

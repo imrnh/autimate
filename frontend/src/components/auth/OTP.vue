@@ -1,13 +1,13 @@
 <template>
     <div class="auth_page_wrapper">
-        <div class="form-structor">
+        <div class="form-structor" :style="{ width: '380px', height: '530px' }">
             <div :class="['signup', { 'slide-up': currentForm === 'login' }]">
                 <h2 class="form-title" @click="toggleForm('signup')">
                     Verify Number
                 </h2><br>
-                <div class="form-holder">
-                    <input v-model="verifData.phone" type="text" name="phoneNumber" class="input" placeholder="Phone" />
-                    <input v-model="verifData.otp"  type="text" name="otp" class="input" placeholder="Password" />
+                <div class="form-holder" :style="{ width: '300px', marginLeft: '-25px' }">
+                    <input v-model="verifData.phone" type="text" name="phoneNumber" class="input" placeholder="Phone" :style="{fontSize: '13px', height: '45px'}" />
+                    <input v-model="verifData.otp"  type="text" name="otp" class="input" placeholder="Password" :style="{fontSize: '13px', height: '45px'}" />
                 </div>
                 <button class="submit-btn" @click="verifyOTP">Verify</button>
                 <div class="resendOtp" @click="resendOtp">Resend code</div>
@@ -140,7 +140,7 @@ body {
         background-repeat: no-repeat;
         background-position: left bottom;
         background-size: 500px;
-        background-image: url('https://images.unsplash.com/photo-1503602642458-232111445657?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=bf884ad570b50659c5fa2dc2cfb20ecf&auto=format&fit=crop&w=1000&q=100');
+        background-image: url('https://images.pexels.com/photos/3662632/pexels-photo-3662632.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
     }
 
     .signup {

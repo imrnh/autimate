@@ -1,16 +1,16 @@
 <template>
   <div class="auth_page_wrapper">
-    <div class="form-structor">
+    <div class="form-structor" :style="{ width: '380px', height: '530px' }">
       <div :class="['signup', { 'slide-up': currentForm === 'login' }]">
         <h2 class="form-title" @click="toggleForm('signup')">
           <span>or</span>Sign up
         </h2>
-        <div class="form-holder">
-          <input v-model="signupData.fullName" type="text" name="fullname" class="input" placeholder="Name" />
-          <input v-model="signupData.phone" type="text" name="phoneNumber" class="input" placeholder="Phone" />
-          <input v-model="signupData.password" type="password" name="password" class="input" placeholder="Password" />
+        <div class="form-holder" :style="{ width: '330px', marginLeft: '-40px' }">
+          <input v-model="signupData.fullName" type="text" name="fullname" class="input" placeholder="Name" :style="{fontSize: '13px', height: '45px'}" />
+          <input v-model="signupData.phone" type="text" name="phoneNumber" class="input" placeholder="Phone" :style="{fontSize: '13px', height: '45px'}" />
+          <input v-model="signupData.password" type="password" name="password" class="input" placeholder="Password" :style="{fontSize: '13px', height: '45px'}"/>
         </div>
-        <button class="submit-btn" @click="signup">Sign up</button>
+        <button class="submit-btn" @click="signup" :style="{backgroundColor: 'black', fontSize: '13px'}">Sign up</button>
         <router-link to="/auth/otp/" style="color: black; font-size: 13px;">or Verify phone number</router-link>
 
         <div class="message_show_alart_view">
@@ -23,9 +23,9 @@
           <h2 class="form-title" @click="toggleForm('login')">
             <span>or</span>Log in
           </h2>
-          <div class="form-holder">
-            <input v-model="loginData.phone" type="text" name="phoneNumber" class="input" placeholder="Phone" />
-            <input v-model="loginData.password" type="password" name="password" class="input" placeholder="Password" />
+          <div class="form-holder" :style="{ width: '330px', marginLeft: '-40px' }">
+            <input v-model="loginData.phone" type="text" name="phoneNumber" class="input" placeholder="Phone" :style="{fontSize: '13px', height: '45px'}" />
+            <input v-model="loginData.password" type="password" name="password" class="input" placeholder="Password" :style="{fontSize: '13px', height: '45px'}" />
           </div>
           <button class="submit-btn" @click="login">Log in</button>
           <router-link to="/auth/password/reset/" style="color: black; font-size: 13px;">Forgot password?</router-link>
@@ -91,6 +91,9 @@ export default {
 
 
     async login() {//login if user creds valid and user verified. Set cookie.
+      Cookies.set('token', "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIrODgwMTg3MzY5NzcwMiIsImlhdCI6MTcyNzYzMDMwNCwiZXhwIjoxNzI3NzMwMzA0fQ.c18_KutXr8eXnQ013m6xtpsZB6TN_Ia6agzI7xg3syg");
+      Cookies.set('name', "Muhtasir Imran");
+
       try {
         const response = await axios.post('http://localhost:8080/api/v1/auth/login', {
           phone: this.loginData.phone,
@@ -186,7 +189,7 @@ body {
     background-repeat: no-repeat;
     background-position: left bottom;
     background-size: 500px;
-    background-image: url('https://images.unsplash.com/photo-1503602642458-232111445657?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=bf884ad570b50659c5fa2dc2cfb20ecf&auto=format&fit=crop&w=1000&q=100');
+    background-image: url('https://images.pexels.com/photos/3661286/pexels-photo-3661286.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
   }
 
   .signup {
@@ -236,6 +239,11 @@ body {
       }
     }
 
+    .form-structor{
+      width: 400px;
+      background-color: red;
+    }
+
     .form-holder {
       border-radius: 15px;
       background-color: #fff;
@@ -250,7 +258,7 @@ body {
         outline: none;
         box-shadow: none;
         display: block;
-        height: 33px;
+        /* height: 33px; */
         line-height: 30px;
         padding: 8px 15px;
         border-bottom: 1px solid #eee;
@@ -258,6 +266,7 @@ body {
         font-size: 12px;
         background-color: white;
         color: black;
+        height: 50px;
 
 
 

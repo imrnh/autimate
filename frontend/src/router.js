@@ -30,6 +30,7 @@ import SnakeGame from './components/home/games/SnakeGame.vue';
 import AlphabetFind from './components/home/therapy/funalphabet/AlphabetFind.vue';
 import AlphabetLearn from './components/home/therapy/funalphabet/AlphabetLearn.vue';
 import FunAlphabetMainMenu from './components/home/therapy/funalphabet/FunAlphabetMainMenu.vue';
+import AddNewChildProfile from './components/home/AddNewChildProfile.vue';
 
 const routes = [
   // Public Routes
@@ -46,6 +47,8 @@ const routes = [
     children: [
       { path: '', redirect: '/dashboard/home' }, // Default child route
       { path: 'home', component: Home },
+      { path: 'newchprofile', component: AddNewChildProfile },
+
       { path: 'aex/q', component: QuestionnaireTesting },
       { path: 'aex/video', component: BehavioralVideoTesting, props: true },
       { path: 'aex/r', component: AexTestResult, props: true },
@@ -82,7 +85,7 @@ const routes = [
     meta: { requiresAuth: true, role: 'admin' }, // Protect with admin role
     children: [
       { path: '', redirect: '/admin/home' }, // Default child route
-      { path: 'home', component: Home },
+      { path: 'home', component: AllDoctors },
       { path: 'doctors', component: AllDoctors },
       { path: 'doctors/add', component: AddDoctor },
     ],
