@@ -5,12 +5,11 @@ import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.json.XML;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
-
 
 @Component
 public class ForwardGeoCoding {
@@ -21,8 +20,8 @@ public class ForwardGeoCoding {
     public static Map<String, String> getLocationData(String locationString) throws IOException {
         String encodedLocation = locationString.replaceAll(" ", "%20").replaceAll(",", "%2C");
 
-        try{
-            String url = "https://us1.locationiq.com/v1/search?q=" + encodedLocation + "&key=" + API_KEY;
+        try {
+            String url = "https://us1.locationiq.com/v1/search?q=" + encodedLocation + "&format=json&key=" + API_KEY;
             Request request = new Request.Builder()
                     .url(url)
                     .get()
@@ -33,44 +32,47 @@ public class ForwardGeoCoding {
 
             if (response.code() == 200) {
                 String responseBody = response.body().string();
-                JSONObject json = XML.toJSONObject(responseBody);
-                JSONObject searchResults = json.getJSONObject("searchresults");
-                JSONArray places = searchResults.getJSONArray("place");
+                System.out.println("responseBody: " + responseBody);
 
-                if (!places.isEmpty()) {
-                    JSONObject firstPlace = places.getJSONObject(0);
+                JSONArray jsonArray = new JSONArray(responseBody);
+
+                if (jsonArray.length() > 0) {
+                    JSONObject firstPlace = jsonArray.getJSONObject(0);
                     String displayName = firstPlace.getString("display_name");
-                    double latitude = firstPlace.getDouble("lat");
-                    double longitude = firstPlace.getDouble("lon");
+                    String latitude = firstPlace.getString("lat");
+                    String longitude = firstPlace.getString("lon");
 
-                    return Map.of("latitude", String.valueOf(latitude), "longitude",
-                            String.valueOf(longitude), "displayName", displayName, "error", "");
+                    Map<String, String> result = new HashMap<>();
+                    result.put("latitude", latitude);
+                    result.put("longitude", longitude);
+                    result.put("displayName", displayName);
+                    result.put("error", "");
+                    return result;
                 } else {
                     return Map.of("error", "No location found");
                 }
             } else {
-                return  Map.of("error", "Request failed with status: " + response.code());
+                return Map.of("error", "Request failed with status: " + response.code());
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return Map.of("error", e.getMessage());
         }
-
     }
-//    public static void main(String[] args) {
-//        try {
-//            Map<String, String> locationData = getLocationData("Empire state building");
-//
-//            if(!locationData.get("error").isEmpty()) {
-//                System.out.println(locationData.get("error"));
-//            }
-//            else {
-//                System.out.println(locationData.get("latitude"));
-//            }
-//
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
+
+    // public static void main(String[] args) {
+    //     try {
+    //         Map<String, String> locationData = getLocationData("15 Moylapota Main Road, 2nd Floor, Khulna 9100, Bangladesh");
+    //
+    //         if (!locationData.get("error").isEmpty()) {
+    //             System.out.println(locationData.get("error"));
+    //         } else {
+    //             System.out.println("Latitude: " + locationData.get("latitude"));
+    //             System.out.println("Longitude: " + locationData.get("longitude"));
+    //             System.out.println("Display Name: " + locationData.get("displayName"));
+    //         }
+    //     } catch (IOException e) {
+    //         e.printStackTrace();
+    //     }
+    // }
 }
