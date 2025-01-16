@@ -15,12 +15,13 @@ def q10_data_proc(data_array):
 def q10_autism_prediction(model_path, data_array):
     # Data preperation
     data_array = np.array(data_array).astype(np.float32)
+    data_array = np.expand_dims(data_array, 0)
     data_array = {'input': data_array}
 
     # Model building.
     ort_session = ort.InferenceSession(model_path)
     output = ort_session.run(None, data_array)
-    return output[0]
+    return output[0][0]
 
 
 

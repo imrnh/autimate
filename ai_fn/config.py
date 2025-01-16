@@ -11,11 +11,11 @@ mongodb_cfg = SimpleNamespace(
 
 env_cfg = SimpleNamespace(
     MODEL_PATH = "/storage/model.onnx",
-    SPACE_NAME="wiggle-space",
+    SPACE_NAME="autimatespace",
     LOCAL_FILE_NAME="/storage/sub_video.mp4",
     REGION="nyc3",
-    ACCESS_KEY="DO00ND8KPADVKJDN6Z8V",
-    SECRET_KEY="t4KrqnMCaQuzgwFwNzgjyxFk2wDq9Bkx/doXKioSyM4",
+    ACCESS_KEY="DO00BPELN7AQJB3HKY22",
+    SECRET_KEY="OQmzaHbN8kt1vzYvNQI6EUS8ek1U44CFumsLO0HNFfk",
     Q_MODEL_PATH = "/storage/q10_model.onnx"
 )
 
