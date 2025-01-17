@@ -14,18 +14,6 @@ import java.util.List;
 import java.util.Map;
 
 
-
-//import ai.onnxruntime.OnnxTensor;
-//import com.thjavafest.wigglewonders.Wigglewonders.entity.ASDExEntity;
-//import com.thjavafest.wigglewonders.Wigglewonders.entity.QuestionExamEntity;
-//import com.thjavafest.wigglewonders.Wigglewonders.repo.ASDExRepository;
-//import com.thjavafest.wigglewonders.Wigglewonders.repo.QuestionExamRepository;
-//import com.thjavafest.wigglewonders.Wigglewonders.services.ASDExServerlessInvokeService;
-//import com.thjavafest.wigglewonders.Wigglewonders.services.AutismExQ10Service;
-//import com.thjavafest.wigglewonders.Wigglewonders.services.ASDExDBService;
-//import com.thjavafest.wigglewonders.Wigglewonders.services.BucketStorageService;
-
-
 import org.ww.wigglew.config.jwt.JWTExtractorService;
 import org.ww.wigglew.entity.aex.ASDExEntity;
 import org.ww.wigglew.entity.aex.QuestionExamEntity;

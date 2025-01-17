@@ -2,6 +2,13 @@
 ### Fast and reliable early stage autism screening for kids.
 
 
+## Run with Docker
+```
+docker build -t autimate-v1 .
+docker run -p 8080:8080 -p 5173:5173 autimate-v1
+```
+
+
 ## What `AutiMate` does?
 Our app are ment to be used by parents. A parent would answer few questions about child's behavior and upload a single 15-20 sec video clip of the child doing any activity (walking, grabbing objects, arm flipping etc.) and our system would check if child's behavior seemed to be autistic or not. 
 <br>

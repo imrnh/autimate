@@ -16,6 +16,6 @@ if [ ! -d "node_modules" ]; then
     npm install
 fi
 
-# Start the frontend application
+# Start the frontend application within the correct directory
 echo "Starting the frontend..."
-npm run dev --host
+exec npm run dev --host

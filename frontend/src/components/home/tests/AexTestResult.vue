@@ -46,8 +46,8 @@ export default {
 <template>
     <div class="tres_wrapper"
         style="width: calc(100vw - 400px); display: flex; flex-direction: column; margin-left: 100px; justify-content: center;">
-        <img class="cardcontent-icon" loading="lazy" alt="" src="./public/vector-153.svg" />
-        <img class="stars-sec-icon" loading="lazy" alt="" src="./public/vector-155.svg" />
+        <img class="cardcontent-icon" loading="lazy" alt="" src="@/assets/public/vector-153.svg" />
+        <img class="stars-sec-icon" loading="lazy" alt="" src="@/assets/public/vector-155.svg" />
 
         <div class="score-details" style="margin-top: 60px; margin-right: -40px;">
             <div class="full-name-score">
