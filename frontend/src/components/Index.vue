@@ -5,20 +5,16 @@ import '../css/page.css';
 </script>
 
 <template>
-  <div class="page-1">
-    <section class="main">
+  <div class="page-1" style="width: 99vw; padding-left: 3vw;">
+    <section class="main" style="max-width: 99vw;">
       <div class="top-buttons">
         <div class="picturebig">
           <img class="t2pubsfgkl-1-removebg-previe-icon" loading="lazy" alt=""
             src="../assets/public/t2pubsfgkl--1-removebgpreview-1-1@2x.png" />
         </div>
-        <div class="the-harder-you">
-          The harder you work for something, the greater you’ll feel when you
-          achieve it.
-        </div>
-        <h1 class="choosing-the-right-container">
-          <p class="joyful-journeys">Joyful Journeys,</p>
-          <p class="joyful-journeys">One Wiggle at a Time!</p>
+  
+        <h1 class="choosing-the-right-container" style="justify-content: flex-start; align-items: flex-start; display: flex;">
+          Fast and Reliable Early Stage Autism Screening.
         </h1>
         <header class="sidebar">
           <img class="image-132-icon" loading="lazy" alt="" src="../assets/public/image-132@2x.png" />
@@ -33,14 +29,10 @@ import '../css/page.css';
             </nav>
           </nav>
         </header>
-        <button class="button">
-          <router-link to="/login"><div class="button1">LOG in</div></router-link>
+        <button class="button" style="width: 240px;">
+          <router-link to="/auth"><div class="button1" style="margin-left: -32px;">Get Started / Login</div></router-link>
         </button>
-        <button class="button2">
-          <router-link to="/signup">
-            <div class="button3">CREATE AN ACCOUNT</div>
-          </router-link>
-        </button>
+ 
       </div>
     </section>
     <section class="main-content">
@@ -53,7 +45,7 @@ import '../css/page.css';
           </div>
           <div class="reasons">
             <div class="there-are-many">
-              At WiggleWonders, we prioritize creating an exceptional customer
+              At AutiMate, we prioritize creating an exceptional customer
               experience by offering personalized support and easy navigation,
               ensuring every visitor feels valued and empowered. Our
               commitment to excellence guarantees a seamless, joyful journey
@@ -185,15 +177,15 @@ import '../css/page.css';
 
             <div class="reason-paragraph-wrapper">
               <div class="reason-paragraph">
-                <h1 class="there-are-many1">WiggleWonders AT A GLANCE</h1>
+                <h1 class="there-are-many1">AutiMate AT A GLANCE</h1>
                 <div class="although-this-is">
-                  WiggleWonders is an engaging and playful online platform
+                  AutiMate is an engaging and playful online platform
                   dedicated to supporting children with autism through
                   interactive and therapeutic games. Our website offers a
                   variety of activities designed to stimulate cognitive growth
                   and social development, all presented in a fun and
                   accessible manner. With a mission to make learning joyful,
-                  WiggleWonders is the perfect destination for parents and
+                  AutiMate is the perfect destination for parents and
                   educators seeking creative ways to support children on their
                   developmental journey.
                 </div>
