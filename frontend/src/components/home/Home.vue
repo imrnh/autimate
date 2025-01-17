@@ -46,7 +46,7 @@
       </select>
     </section>
 
-   
+
   </div>
 </template>
 
@@ -85,6 +85,18 @@ export default {
       }
     },
 
+    // async fetchChildren() {
+    //   try {
+    //     const token = Cookies.get('token');
+    //     const response = await axios.get(`http://localhost:8080/api/v1/child/list`, {
+    //       headers: { Authorization: `Bearer ${token}` }
+    //     });
+    //     this.children = response.data || []; // Ensure empty array if null
+    //     this.activateChildSession();
+    //   } catch (error) {
+    //     console.error("Error fetching child profiles:", error);
+    //   }
+    // },
     async fetchChildren() {
       try {
         const token = Cookies.get('token');
@@ -92,7 +104,12 @@ export default {
           headers: { Authorization: `Bearer ${token}` }
         });
         this.children = response.data || []; // Ensure empty array if null
-        this.activateChildSession();
+
+        if (this.children.length === 0) {
+          this.$router.push('/dashboard/newchprofile'); // Redirect to create new child profile
+        } else {
+          this.activateChildSession();
+        }
       } catch (error) {
         console.error("Error fetching child profiles:", error);
       }
