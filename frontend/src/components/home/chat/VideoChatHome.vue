@@ -98,21 +98,6 @@ export default {
                 sharedLinks,
             });
 
-            // // Listen for when the host leaves the room
-            // ZegoUIKitPrebuilt.on('roomStateUpdate', (state) => {
-            //     const token = Cookies.get("token");
-            //     if (state === 'DISCONNECTED' && role === ZegoUIKitPrebuilt.Host && token) {
-            //         axios.delete(`https://localhost:8080/api/v1/calls/delete_room/${roomID}`, {
-            //             headers: {
-            //                 'Authorization': `Bearer ${token}`
-            //             }
-            //         }).then(response => {
-            //             console.log('Room deletion tracked:', response.data);
-            //         }).catch(error => {
-            //             console.error('Error tracking room deletion:', error);
-            //         });
-            //     }
-            // });
         });
     },
 };

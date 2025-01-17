@@ -63,35 +63,6 @@ export default {
             }
         },
 
-        // async submitChildForm() {
-        //     try {
-        //         const formData = new FormData();
-        //         formData.append("name", this.newChild.name);
-        //         formData.append("dob", this.newChild.dob);
-        //         formData.append("gender", this.newChild.gender);
-
-        //         console.log("newChild: ", this.newChild);
-
-        //         // formData.append("file", this.selectedFile); // Append file
-
-        //         console.log("formdata: -__---");
-        //         console.log(formData);
-
-        //         const token = Cookies.get('token');
-        //         const response = await axios.post(`http://localhost:8080/api/v1/child/add`, formData, {
-        //             headers: {
-        //                 Authorization: `Bearer ${token}`,
-        //             }
-        //         });
-
-        //         alert("Child profile created successfully!");
-        //         this.fetchChildren(); // Refresh child profiles after creation
-        //     } catch (error) {
-        //         console.error("Error creating child profile:", error);
-        //         alert("Failed to create child profile.");
-        //     }
-        // },
-
         async submitChildForm() {
             try {
                 // Prepare the child data as an object, not FormData
