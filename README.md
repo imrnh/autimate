@@ -28,7 +28,7 @@ We tried to make it as real-time as possible. Unfortunately, we cannot afford a 
 But, we believe that kids at our targeted age are quite slow at drawing and it feels kind of real time at their speed. <br>
 <br>The overall procedure is quite simple. We start by randomly choosing a common object's picture. Then ask the child to draw the object.
 
-<table style="width: 100%;">
+<table style="width: 100%; border: 0">
   <tr>
     <td style="text-align: center; width: 50%;"><img src="frontend/public/drawing_images_references/8115ab50-6f99-409a-ae47-d730b9c68ced.jpeg" width="90px" height="90px"><br><font size="2">Fig 2: Sample easy to draw image</font></td>
     <td style="text-align: center; width: 50%;"><img src="figures/sample_dr_f_saved.png" width="90px"><br><font size="2">Fig 3: Reference image and drawn image combined to ask feedback from AI</font></td>
