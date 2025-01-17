@@ -45,6 +45,9 @@ export default {
       imageName: '',
       imageList: [
         '8115ab50-6f99-409a-ae47-d730b9c68ced.jpeg',
+        '5d4a4260-1456-4a9e-aa05-0c8daaa21b6a.jpeg',
+        '9457e4dd-7550-4c90-98a1-f521f88051f9.jpeg',
+        'b5ed1fb5-b8eb-40db-b8f4-d30e6023c4e6.jpeg',
       ],
       combinedImage: null,
     };
