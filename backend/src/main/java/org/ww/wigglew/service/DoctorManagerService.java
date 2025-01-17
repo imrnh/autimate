@@ -43,7 +43,7 @@ public class DoctorManagerService {
             try {
                 doctorEntity.setLatitude("0");
                 doctorEntity.setLongitude("0");
-                Map<String, String> locationData = getLocationData("Empire state building");
+                Map<String, String> locationData = getLocationData(doctorEntity.getAddress());
                 if(locationData.get("error").isEmpty()) {
                     doctorEntity.setLatitude(locationData.get("latitude"));
                     doctorEntity.setLongitude(locationData.get("longitude"));
@@ -128,6 +128,20 @@ public class DoctorManagerService {
                 existingDoctor.setAddress(updatedDoctor.getAddress());
                 existingDoctor.setRatings(updatedDoctor.getRatings());
 
+                //update longitude, latitude.
+                try {
+                    Map<String, String> locationData = getLocationData(updatedDoctor.getAddress());
+                    if(locationData.get("error").isEmpty()) {
+                        existingDoctor.setLatitude(locationData.get("latitude"));
+                        existingDoctor.setLongitude(locationData.get("longitude"));
+                    }
+                    else {
+                        System.out.println(locationData.get("error"));
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
                 // Retain previous image if no new image is provided
                 if (image != null && !image.isEmpty()) {
                     String imageUrl = uploadImage(image);
@@ -167,9 +181,22 @@ public class DoctorManagerService {
                         double userLongitude = Double.parseDouble(geoResponse.get("longitude"));
                         double userLatitude = Double.parseDouble(geoResponse.get("latitude"));
 
+                        System.out.println("Got user loc: " + userLongitude + " " + userLatitude);
+
                         // Sort doctors by distance using the Haversine formula
                         doctors.sort(Comparator.comparingDouble(doctor -> IpGeolocation.calculateDistance(userLatitude, userLongitude,
                                 Double.parseDouble(doctor.getLatitude()), Double.parseDouble(doctor.getLongitude()))));
+//                        doctors.sort(Comparator.comparingDouble(doctor -> {
+//                            double distance = IpGeolocation.calculateDistance(
+//                                    userLatitude,
+//                                    userLongitude,
+//                                    Double.parseDouble(doctor.getLatitude()),
+//                                    Double.parseDouble(doctor.getLongitude())
+//                            );
+//                            System.out.println("Distance for doctor " + doctor.getName() + ": " + distance); // Replace getName() with an appropriate identifier
+//                            return distance;
+//                        }));
+
                     }
                 }
             }
