@@ -10,11 +10,11 @@ docker run -p 8080:8080 -p 5173:5173 autimate-v1
 
 ### Credentials to login
 #### User
-01902207411
+019*****411
 password1
 
 #### Admin 
-01902207410
+019*****410
 holymoly
 
 ## What `AutiMate` does?
